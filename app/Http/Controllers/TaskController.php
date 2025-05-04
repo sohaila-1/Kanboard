@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Task;
 use Illuminate\Http\Request;
+
+
 
 class TaskController extends Controller
 {
@@ -17,18 +20,29 @@ class TaskController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($projectId)
     {
-        //
+        return view('tasks.create', ['projectId' => $projectId]);
     }
+    
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $projectId)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+    
+        \App\Models\Task::create([
+            'title' => $request->title,
+            'project_id' => $projectId,
+        ]);
+    
+        return redirect()->route('projects.show', $projectId)->with('success', 'Tâche ajoutée avec succès.');
     }
+    
 
     /**
      * Display the specified resource.
@@ -41,24 +55,32 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
-    }
+    public function edit($projectId, Task $task)
+{
+    return view('tasks.edit', [
+        'task' => $task,
+        'projectId' => $projectId,
+    ]);
+}
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+public function update(Request $request, $projectId, Task $task)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+    ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    $task->update([
+        'title' => $request->title,
+    ]);
+
+    return redirect()->route('projects.show', $projectId)->with('success', 'Tâche mise à jour.');
+}
+
+public function destroy($projectId, Task $task)
+{
+    $task->delete();
+
+    return redirect()->route('projects.show', $projectId)->with('success', 'Tâche supprimée.');
+}
+
 }

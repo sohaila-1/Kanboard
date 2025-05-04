@@ -4,18 +4,27 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
- 
+use App\Http\Controllers\DashboardController;
+
 Route::resource('projects', ProjectController::class);
 Route::resource('tasks', TaskController::class);
-
+Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
+Route::get('/projects/{project}/edit', [\App\Http\Controllers\ProjectController::class, 'edit'])->name('projects.edit');
+Route::put('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'update'])->name('projects.update');
+Route::delete('/projects/{project}', [\App\Http\Controllers\ProjectController::class, 'destroy'])->name('projects.destroy');
+Route::get('/projects/{project}/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
+Route::post('/projects/{project}/tasks', [TaskController::class, 'store'])->name('tasks.store');
+Route::get('/projects/{project}/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
+Route::put('/projects/{project}/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+Route::delete('/projects/{project}/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/dashboard', DashboardController::class)
+    ->middleware(['auth']) // <- sans "verified"
+    ->name('dashboard');
 
-// Dashboard protégé : l'utilisateur doit être connecté ET avoir validé son email
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 // Groupe de routes pour gérer le profil : nécessite d'être connecté
 Route::middleware(['auth', 'verified'])->group(function () {

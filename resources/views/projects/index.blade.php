@@ -1,36 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Créer un projet</title>
-</head>
-<body>
-    <h1>Créer un projet</h1>
+@extends('layouts.app')
 
-    @if(session('success'))
-    <div style="color: green; margin-bottom: 20px;">
-        {{ session('success') }}
-    </div>
-@endif
+@section('title', 'Liste des projets')
 
-    <form method="POST" action="{{ route('projects.store') }}">
-        @csrf
+@section('content')
+    <h1>📋 Mes Projets</h1>
 
-        <div>
-            <label for="title">Titre du projet:</label>
-            <input type="text" id="title" name="title" value="{{ old('title') }}" required>
-        </div>
+    @if (session('success'))
+        <p style="color: green;">{{ session('success') }}</p>
+    @endif
 
-        <div>
-            <label for="description">Description:</label>
-            <textarea id="description" name="description">{{ old('description') }}</textarea>
-        </div>
-
-        <div>
-            <button type="submit">Créer</button>
-        </div>
-    </form>
-
-    <a href="/projects">Retour à la liste</a>
-</body>
-</html>
+    @if ($projects->isEmpty())
+        <p>Aucun projet pour le moment.</p>
+    @else
+        <ul>
+            @foreach ($projects as $project)
+                <li>
+                    <strong>{{ $project->title }}</strong> — {{ $project->description }}<br>
+                    <a href="{{ route('projects.show', $project->id) }}">➡️ Voir</a> |
+                    <a href="{{ route('projects.edit', $project->id) }}">✏️ Modifier</a>
+                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" onclick="return confirm('Supprimer ce projet ?')">🗑️ Supprimer</button>
+                    </form>
+                </li>
+            @endforeach
+        </ul>
+    @endif
+@endsection
