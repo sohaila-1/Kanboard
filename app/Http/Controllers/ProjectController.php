@@ -88,4 +88,29 @@ class ProjectController extends Controller
         return redirect()->route('projects.index')->with('success', 'Projet supprimé avec succès.');
     }
     
+    public function kanban(Project $project)
+    {
+        $project->load('tasks');
+        return view('projects.kanban', compact('project'));
+    }
+
+    public function calendar(Project $project)
+{
+    $tasks = $project->tasks()
+        ->select('title', 'due_date')
+        ->whereNotNull('due_date')
+        ->get();
+
+    $events = $tasks->map(function ($task) {
+        return [
+            'title' => $task->title,
+            'start' => $task->due_date
+        ];
+    });
+
+    return view('projects.calendar', compact('project', 'events'));
+}
+
+     
+
 }

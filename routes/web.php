@@ -17,6 +17,12 @@ Route::post('/projects/{project}/tasks', [TaskController::class, 'store'])->name
 Route::get('/projects/{project}/tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
 Route::put('/projects/{project}/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
 Route::delete('/projects/{project}/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+Route::post('/tasks/{task}/move', [TaskController::class, 'move']);
+Route::get('/projects/{project}/tasks/list', [TaskController::class, 'list'])->name('projects.tasks.list');
+Route::get('/projects/{project}/kanban', [ProjectController::class, 'kanban'])->name('projects.kanban');
+Route::get('/projects/{project}/calendar', [\App\Http\Controllers\ProjectController::class, 'calendar'])->name('projects.calendar');
+
+
 Route::get('/', function () {
     return view('welcome');
 });

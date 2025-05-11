@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
 use Illuminate\Http\Request;
+use App\Models\Project; 
+use App\Models\Task;
 
 
 
@@ -20,9 +21,9 @@ class TaskController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create($projectId)
+    public function create(Project $project)
     {
-        return view('tasks.create', ['projectId' => $projectId]);
+        return view('tasks.create', compact('project'));
     }
     
 
@@ -42,7 +43,13 @@ class TaskController extends Controller
     
         return redirect()->route('projects.show', $projectId)->with('success', 'Tâche ajoutée avec succès.');
     }
+    public function move(Request $request, Task $task)
+    {
+        $task->category = ucfirst($request->category);
+        $task->save();
     
+        return response()->json(['status' => 'ok']);
+    } 
 
     /**
      * Display the specified resource.
@@ -81,6 +88,29 @@ public function destroy($projectId, Task $task)
     $task->delete();
 
     return redirect()->route('projects.show', $projectId)->with('success', 'Tâche supprimée.');
+}
+
+
+public function list(Request $request, Project $project)
+{
+    $query = $project->tasks();
+
+    // Filtres possibles
+    if ($request->filled('title')) {
+        $query->where('title', 'like', '%' . $request->title . '%');
+    }
+
+    if ($request->filled('category')) {
+        $query->where('category', $request->category);
+    }
+
+    if ($request->filled('description')) {
+        $query->where('description', 'like', '%' . $request->description . '%');
+    }
+
+    $tasks = $query->get();
+
+    return view('tasks.list', compact('project', 'tasks'));
 }
 
 }

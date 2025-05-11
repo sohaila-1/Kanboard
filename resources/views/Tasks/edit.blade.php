@@ -1,64 +1,50 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Modifier la tâche</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f7f7f7;
-            padding: 2rem;
-        }
-        form {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            max-width: 500px;
-        }
-        label {
-            display: block;
-            margin-top: 1rem;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 0.5rem;
-            margin-top: 0.5rem;
-            box-sizing: border-box;
-        }
-        button {
-            margin-top: 1.5rem;
-            padding: 0.5rem 1rem;
-        }
-        a {
-            display: inline-block;
-            margin-top: 1rem;
-            text-decoration: none;
-            color: #007bff;
-        }
-    </style>
-</head>
-<body>
-    <h1>✏️ Modifier la tâche</h1>
+@extends('layouts.app')
 
-    @if ($errors->any())
-        <ul style="color: red;">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
+@section('title', 'Modifier la tâche')
 
-    <form action="{{ route('tasks.update', ['project' => $projectId, 'task' => $task->id]) }}" method="POST">
+@section('content')
+<div class="container mt-4">
+    <h2 class="mb-4">✏️ Modifier la tâche</h2>
+
+    <form action="{{ route('tasks.update', [$projectId, $task]) }}" method="POST" class="card p-4 shadow-sm">
         @csrf
         @method('PUT')
 
-        <label for="title">Titre de la tâche :</label>
-        <input type="text" name="title" id="title" value="{{ $task->title }}" required>
+        <div class="mb-3">
+            <label for="title" class="form-label">Titre</label>
+            <input type="text" name="title" id="title" value="{{ old('title', $task->title) }}" class="form-control" required>
+        </div>
 
-        <button type="submit">💾 Sauvegarder</button>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" rows="3" class="form-control">{{ old('description', $task->description) }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Catégorie</label>
+            <select name="category" id="category" class="form-select">
+                @foreach (['À faire', 'En cours', 'Fait', 'Annulé'] as $cat)
+                    <option value="{{ $cat }}" @if($task->category === $cat) selected @endif>{{ $cat }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="priority" class="form-label">Priorité</label>
+            <select name="priority" id="priority" class="form-select">
+                @foreach (['Élevée', 'Moyenne', 'Basse'] as $prio)
+                    <option value="{{ $prio }}" @if($task->priority === $prio) selected @endif>{{ $prio }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="due_date" class="form-label">Date limite</label>
+            <input type="date" name="due_date" id="due_date" value="{{ $task->due_date }}" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 Enregistrer</button>
+        <a href="{{ route('projects.show', $projectId) }}" class="btn btn-secondary ms-2">⬅️ Retour au projet</a>
     </form>
-
-    <a href="{{ route('projects.show', $projectId) }}">⬅️ Retour au projet</a>
-</body>
-</html>
+</div>
+@endsection

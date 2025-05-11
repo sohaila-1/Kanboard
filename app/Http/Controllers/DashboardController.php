@@ -12,7 +12,10 @@ class DashboardController extends Controller
     {
         $projects = Project::where('user_id', auth()->id())->get();
         $tasks = Task::where('user_id', auth()->id())->get();
-
-        return view('dashboard', compact('projects', 'tasks'));
+    
+        $projects_count = $projects->count();
+        $tasks_count = $tasks->count();
+    
+        return view('dashboard', compact('projects', 'tasks', 'projects_count', 'tasks_count'));
     }
 }

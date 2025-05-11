@@ -3,31 +3,24 @@
 @section('title', 'Créer un projet')
 
 @section('content')
-    <h1>Créer un projet</h1>
+<div class="container mt-4">
+    <h2 class="mb-4">📁 Créer un nouveau projet</h2>
 
-    @if ($errors->any())
-        <ul style="color: red;">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    @endif
-
-    <form action="{{ route('projects.store') }}" method="POST">
+    <form action="{{ route('projects.store') }}" method="POST" class="card p-4 shadow-sm">
         @csrf
-        <label for="title">Titre du projet:</label>
-        <input type="text" name="title" id="title" required>
 
-        <br><br>
+        <div class="mb-3">
+            <label for="title" class="form-label">Titre du projet</label>
+            <input type="text" name="title" id="title" class="form-control" required>
+        </div>
 
-        <label for="description">Description:</label>
-        <textarea name="description" id="description"></textarea>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description (facultative)</label>
+            <textarea name="description" id="description" rows="4" class="form-control"></textarea>
+        </div>
 
-        <br><br>
-
-        <button type="submit">Créer</button>
+        <button type="submit" class="btn btn-primary">Créer</button>
+        <a href="{{ route('projects.index') }}" class="btn btn-secondary ms-2">⬅️ Retour à la liste</a>
     </form>
-
-    <br>
-    <a href="{{ route('projects.index') }}">⬅️ Retour à la liste</a>
+</div>
 @endsection
