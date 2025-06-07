@@ -2,108 +2,122 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Kanboard')</title>
-    <!-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> -->
-    <!-- Bootstrap CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
     <style>
-    html, body {
-        height: 100%;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-    }
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
 
+        body {
+            display: flex;
+            flex-direction: column;
+        }
 
-    main {
-        flex: 1;
-    }
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+        }
 
-    .kanban-board {
-        display: flex;
-        gap: 1.5rem;
-        overflow-x: auto;
-        padding-bottom: 1rem;
-    }
+        .sidebar {
+            width: 240px;
+            height: 100%;
+            background-color: #fff;
+            border-right: 1px solid #eee;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1rem;
+        }
 
-    .kanban-column {
-        min-width: 300px;
-        background-color: #ebecf0;
-        border-radius: 10px;
-        padding: 1rem;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    }
+        .sidebar h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
 
-    .kanban-column h4 {
-        font-size: 1.1rem;
-        font-weight: bold;
-        margin-bottom: 1rem;
-    }
+        .sidebar a {
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.4rem;
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
 
-    .kanban-card {
-        background-color: white;
-        border-radius: 6px;
-        padding: 0.75rem;
-        margin-bottom: 0.75rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        transition: transform 0.1s;
-    }
+        .sidebar a:hover {
+            background-color: #f0f0f0;
+        }
 
-    .kanban-card:hover {
-        transform: scale(1.02);
-    }
-</style>
+        .sidebar a.active {
+            background-color: #e8f0fe;
+            font-weight: 600;
+            color: #1a73e8;
+        }
 
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            width: 100%; /* ✅ assure largeur plein écran */
+        }
+
+        footer {
+            height: 60px;
+            background: #f8f9fa;
+            text-align: center;
+            line-height: 60px;
+            font-size: 0.85rem;
+            color: #888;
+            border-top: 1px solid #ddd;
+        }
+    </style>
 </head>
 
 <body>
+    <div class="page-wrapper">
+        <div class="sidebar">
+            <h4 class="text-center fw-bold mb-4">📌 Kanboard</h4>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{{ route('projects.index') }}">Kanboard</a>
+            <a href="{{ route('projects.create') }}">➕ Nouveau projet</a>
+            <a href="{{ route('projects.index') }}">📁 Mes projets</a>
 
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('projects.create') }}">➕ Nouveau projet</a>
-                </li>
-            </ul>
+            @auth
+                <a href="#">⚙️ Modifier profil</a>
+                <form action="{{ route('logout') }}" method="POST" class="mt-auto">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-danger w-100 mt-3">🚪 Se déconnecter</button>
+                </form>
+            @endauth
 
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                @auth
-                    <li class="nav-item">
-                        <span class="nav-link">👋 {{ Auth::user()->name }}</span>
-                    </li>
-                    <li class="nav-item">
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-link nav-link" style="padding: 0;">🚪 Se déconnecter</button>
-                    </form>
-                    </li>
-                @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">📝 S'inscrire</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">🔐 Se connecter</a>
-                    </li>
-                @endauth
-            </ul>
+            @guest
+                <div class="mt-auto">
+                    <a href="{{ route('register') }}" class="btn btn-outline-primary w-100 mb-2">📝 S'inscrire</a>
+                    <a href="{{ route('login') }}" class="btn btn-outline-secondary w-100">🔐 Se connecter</a>
+                </div>
+            @endguest
+        </div>
+
+        <div class="main-content">
+            @yield('content')
         </div>
     </div>
-</nav>
-<main class="container mt-4">
-    @yield('content')
-</main>
 
-<footer class="bg-dark text-white text-center py-3">
-        <div class="container">
-            <small>© {{ date('Y') }} Kanboard — Tous droits réservés.</small>
-        </div>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-@yield('scripts')
+    <footer>
+        © {{ date('Y') }} Kanboard — Tous droits réservés.
+    </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    @yield('scripts')
 </body>
 </html>

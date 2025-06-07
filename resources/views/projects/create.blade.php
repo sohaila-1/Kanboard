@@ -3,24 +3,36 @@
 @section('title', 'Créer un projet')
 
 @section('content')
-<div class="container mt-4">
-    <h2 class="mb-4">📁 Créer un nouveau projet</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white text-center">
+                    <h5>📁 Créer un nouveau projet</h5>
+                </div>
 
-    <form action="{{ route('projects.store') }}" method="POST" class="card p-4 shadow-sm">
-        @csrf
+                <div class="card-body">
+                    <form action="{{ route('projects.store') }}" method="POST">
+                        @csrf
 
-        <div class="mb-3">
-            <label for="title" class="form-label">Titre du projet</label>
-            <input type="text" name="title" id="title" class="form-control" required>
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Titre du projet</label>
+                            <input type="text" name="title" id="title" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description (facultative)</label>
+                            <textarea name="description" id="description" class="form-control" rows="4"></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ route('projects.index') }}" class="btn btn-secondary">⬅️ Retour à la liste</a>
+                            <button type="submit" class="btn btn-dark">Créer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <div class="mb-3">
-            <label for="description" class="form-label">Description (facultative)</label>
-            <textarea name="description" id="description" rows="4" class="form-control"></textarea>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Créer</button>
-        <a href="{{ route('projects.index') }}" class="btn btn-secondary ms-2">⬅️ Retour à la liste</a>
-    </form>
+    </div>
 </div>
 @endsection

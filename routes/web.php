@@ -20,7 +20,9 @@ Route::delete('/projects/{project}/tasks/{task}', [TaskController::class, 'destr
 Route::post('/tasks/{task}/move', [TaskController::class, 'move']);
 Route::get('/projects/{project}/tasks/list', [TaskController::class, 'list'])->name('projects.tasks.list');
 Route::get('/projects/{project}/kanban', [ProjectController::class, 'kanban'])->name('projects.kanban');
+Route::post('/tasks/{task}/move', [TaskController::class, 'move'])->name('tasks.move');
 Route::get('/projects/{project}/calendar', [\App\Http\Controllers\ProjectController::class, 'calendar'])->name('projects.calendar');
+Route::get('/projects/{project}/members/add', [ProjectMemberController::class, 'create'])->name('projects.members.add');
 
 
 Route::get('/', function () {

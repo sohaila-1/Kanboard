@@ -10,12 +10,21 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $projects = \App\Models\Project::all(); // PAS de where('user_id') si pas d’auth
+
+public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $projects = \App\Models\Project::where('user_id', auth()->id())
+        ->when($search, function ($query, $search) {
+            return $query->where('title', 'like', "%{$search}%");
+        })
+        ->get();
+
+    return view('projects.index', compact('projects'));
+}
+
     
-        return view('projects.index', compact('projects'));
-    }
     
 
     /**
@@ -40,31 +49,56 @@ class ProjectController extends Controller
         \App\Models\Project::create([
             'title' => $request->title,
             'description' => $request->description,
+            'user_id' => auth()->id(), // ✅ lier le projet à l'utilisateur connecté
         ]);
     
         return redirect()->route('projects.index')->with('success', 'Projet créé avec succès.');
     }
     
+    
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Project $project, Request $request)
     {
-        $project = \App\Models\Project::with('tasks')->findOrFail($id);
-        return view('projects.show', compact('project'));
+        if ($project->user_id !== auth()->id()) {
+            abort(403); // 🔒 Bloque l'accès si ce n'est pas le propriétaire
+        }
+
+        $search = $request->input('search');
+
+        $tasks = $project->tasks()
+            ->when($search, function ($query, $search) {
+                return $query->where('title', 'like', "%{$search}%");
+            })
+            ->get();
+
+        return view('projects.show', [
+            'project' => $project,
+            'tasks' => $tasks
+        ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Project $project)
     {
+        if ($project->user_id !== auth()->id()) {
+            abort(403);
+        }
+    
         return view('projects.edit', compact('project'));
     }
     
+    
     public function update(Request $request, Project $project)
     {
+        if ($project->user_id !== auth()->id()) {
+            abort(403);
+        }
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -87,12 +121,28 @@ class ProjectController extends Controller
     
         return redirect()->route('projects.index')->with('success', 'Projet supprimé avec succès.');
     }
-    
-    public function kanban(Project $project)
-    {
-        $project->load('tasks');
-        return view('projects.kanban', compact('project'));
+
+public function kanban(Project $project)
+{
+    $tasks = $project->tasks;
+
+    $columns = [
+        'à faire' => [],
+        'en cours' => [],
+        'fait' => [],
+        'annulé' => [],
+    ];
+
+    foreach ($tasks as $task) {
+        $cat = strtolower(trim($task->category ?? 'à faire'));
+        $columns[$cat][] = $task;
     }
+
+    return view('projects.kanban', compact('project', 'columns'));
+}
+
+
+
 
     public function calendar(Project $project)
 {

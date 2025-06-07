@@ -3,49 +3,39 @@
 @section('title', 'Vue Kanban')
 
 @section('content')
-<div class="container mt-4">
-    <h2 class="mb-4">{{ $project->title }} - Vue Kanban</h2>
+<div class="main-content">
+    <h2 class="mb-4">{{ $project->title }} — Vue Kanban</h2>
 
-    <div class="kanban-board">
-        @foreach(['À faire', 'En cours', 'Fait', 'Annulé'] as $column)
-            <div class="kanban-column">
-                <h4 class="text-center fw-bold">{{ $column }}</h4>
+    <div class="kanban-wrapper d-flex gap-3">
+        @foreach ($columns as $status => $tasks)
+            <div class="kanban-column" data-category="{{ $status }}">
+                <h5 class="kanban-title">
+                    @if($status === 'à faire')📃 @elseif($status === 'en cours')📰 @elseif($status === 'fait')✅ @elseif($status === 'annulé')❌ @endif
+                    {{ ucfirst($status) }}
+                </h5>
 
-                @php
-                    $priorities = ['Élevée' => 1, 'Moyenne' => 2, 'Basse' => 3];
+                <div class="kanban-cards"
+                     ondrop="drop(event, '{{ $status }}')"
+                     ondragover="allowDrop(event)">
 
-                    $tasks = $project->tasks
-                        ->where('category', $column)
-                        ->sortBy(function($task) use ($priorities) {
-                            return $priorities[$task->priority] ?? 4;
-                        });
-                @endphp
-
-                <div id="{{ Str::slug($column) }}" class="kanban-list">
                     @foreach ($tasks as $task)
-                        <div class="kanban-card" data-id="{{ $task->id }}">
-                            <div class="d-flex justify-content-between align-items-start">
+                        <div class="kanban-card" draggable="true" ondragstart="drag(event)" id="task-{{ $task->id }}">
+                            <div class="d-flex justify-content-between">
                                 <strong>{{ $task->title }}</strong>
-                                @php
-                                    $badgeClass = match($task->priority) {
-                                        'Élevée' => 'danger',
-                                        'Moyenne' => 'warning',
-                                        'Basse' => 'success',
-                                        default => 'secondary'
-                                    };
-                                @endphp
-                                <span class="badge bg-{{ $badgeClass }}">{{ $task->priority }}</span>
+                                <div class="d-flex gap-1">
+                                    <a href="{{ route('tasks.edit', [$project->id, $task->id]) }}" class="btn btn-sm btn-outline-secondary px-2">✏️</a>
+                                    <form method="POST" action="{{ route('tasks.destroy', [$project->id, $task->id]) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger px-2">🗑️</button>
+                                    </form>
+                                </div>
                             </div>
-
-                            @if($task->description)
-                                <p class="text-muted small mb-1">{{ $task->description }}</p>
-                            @endif
-
-                            @if($task->due_date)
-                                <p class="small mb-0 text-muted">📅 {{ \Carbon\Carbon::parse($task->due_date)->format('d/m/Y') }}</p>
-                            @endif
                         </div>
                     @endforeach
+
+                    <a href="{{ route('tasks.create', ['project' => $project->id, 'category' => $status]) }}"
+                       class="btn btn-sm btn-outline-primary mt-2">➕ Ajouter une tâche</a>
                 </div>
             </div>
         @endforeach
@@ -54,26 +44,99 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <script>
-    document.querySelectorAll('.kanban-list').forEach(list => {
-        new Sortable(list, {
-            group: 'shared',
-            animation: 150,
-            onEnd: function (evt) {
-                const taskId = evt.item.dataset.id;
-                const newColumn = evt.to.id;
+    function allowDrop(ev) {
+        ev.preventDefault();
+        ev.currentTarget.classList.add("drag-over");
+    }
 
-                fetch(`/tasks/${taskId}/move`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                    body: JSON.stringify({ category: newColumn.replace('-', ' ') })
-                });
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev, newCategory) {
+        ev.preventDefault();
+        ev.currentTarget.classList.remove("drag-over");
+
+        const taskId = ev.dataTransfer.getData("text").replace("task-", "");
+        const taskElement = document.getElementById("task-" + taskId);
+
+        ev.currentTarget.appendChild(taskElement);
+
+        fetch(`/tasks/${taskId}/move`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ category: newCategory })
+        }).then(res => {
+            if (!res.ok) {
+                alert("Erreur lors du déplacement.");
             }
         });
-    });
+    }
 </script>
+
+<style>
+    .kanban-wrapper {
+        display: flex;
+        gap: 1.5rem;
+        overflow-x: auto;
+        padding-bottom: 2rem;
+        align-items: flex-start;
+    }
+
+    .kanban-column {
+        min-width: 250px;
+        max-width: 300px;
+        flex: 1;
+        background: #f9fafb;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .kanban-title {
+        text-align: center;
+        padding: 0.3rem;
+        font-weight: bold;
+        border-radius: 6px;
+        font-size: 1rem;
+    }
+
+    .kanban-column[data-category="à faire"] .kanban-title { background-color: #e0f2fe; }
+    .kanban-column[data-category="en cours"] .kanban-title { background-color: #fef9c3; }
+    .kanban-column[data-category="fait"] .kanban-title { background-color: #dcfce7; }
+    .kanban-column[data-category="annulé"] .kanban-title { background-color: #fee2e2; }
+
+    .kanban-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        min-height: 100px;
+        max-height: 500px;
+        overflow-y: auto;
+    }
+
+    .kanban-card {
+        padding: 0.5rem;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease;
+        cursor: grab;
+        font-size: 0.85rem;
+    }
+
+    .kanban-card:hover {
+        transform: scale(1.01);
+        background-color: #f3f4f6;
+    }
+
+    .kanban-cards.drag-over {
+        border: 2px dashed #3b82f6;
+        background-color: #eff6ff;
+    }
+</style>
 @endsection

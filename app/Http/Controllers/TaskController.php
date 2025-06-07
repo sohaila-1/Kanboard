@@ -32,24 +32,34 @@ class TaskController extends Controller
      */
     public function store(Request $request, $projectId)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'category' => 'nullable|string',
         ]);
-    
-        \App\Models\Task::create([
-            'title' => $request->title,
+
+        Task::create([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'category' => strtolower(trim($validated['category'] ?? 'à faire')),
             'project_id' => $projectId,
         ]);
-    
-        return redirect()->route('projects.show', $projectId)->with('success', 'Tâche ajoutée avec succès.');
+
+        return redirect()->route('projects.show', $projectId)
+            ->with('success', 'Tâche ajoutée avec succès.');
     }
+
+
+
+
     public function move(Request $request, Task $task)
     {
-        $task->category = ucfirst($request->category);
+        $task->category = strtolower(trim($request->category));
         $task->save();
-    
+
         return response()->json(['status' => 'ok']);
-    } 
+    }
+
 
     /**
      * Display the specified resource.
@@ -70,18 +80,24 @@ class TaskController extends Controller
     ]);
 }
 
-public function update(Request $request, $projectId, Task $task)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-    ]);
+    public function update(Request $request, $projectId, Task $task)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'category' => 'nullable|string',
+        ]);
 
-    $task->update([
-        'title' => $request->title,
-    ]);
+        $task->update([
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'category' => strtolower(trim($validated['category'] ?? 'à faire')),
+        ]);
 
-    return redirect()->route('projects.show', $projectId)->with('success', 'Tâche mise à jour.');
-}
+        return redirect()->route('projects.show', $projectId)
+            ->with('success', 'Tâche mise à jour.');
+    }
+
 
 public function destroy($projectId, Task $task)
 {

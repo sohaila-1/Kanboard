@@ -1,97 +1,262 @@
-body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
-    margin: 0;
-    padding: 0;
-    max-width: 100vw;
-    overflow-x: hidden;
-}
-
-nav {
-    background-color: #007bff;
-    padding: 1rem;
-    color: white;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    margin-right: 1.5rem;
-    font-weight: bold;
-}
-
-.container {
-    padding: 2rem;
-    max-width: 900px;
-    margin: auto;
-    background-color: white;
-    margin-top: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
-}
-
-button {
-    background-color: #007bff;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-input, textarea {
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.3rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-/* Reset de base */
+/* ======= RESET DE BASE ======= */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  
-  /* Rendre les images et les sections fluides */
-  img, video {
-    max-width: 100%;
-    height: auto;
-  }
-  /* Pour les petits écrans (smartphones) */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+  max-width: 100vw;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+}
+
+/* ======= SIDEBAR ======= */
+.sidebar {
+  width: 250px;
+  background-color: #1c1c1c;
+  color: white;
+  padding: 1rem;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.sidebar .btn-danger {
+  background-color: #dc3545;
+  border: none;
+  padding: 0.6rem;
+  font-weight: bold;
+  border-radius: 4px;
+  margin-top: 2rem;
+  width: 100%;
+  cursor: pointer;
+}
+
+.sidebar .btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* ======= CONTENU PRINCIPAL ======= */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  width: 100%;
+}
+
+/* ======= BARRE DE RECHERCHE ======= */
+.search-bar {
+  max-width: 320px;
+  margin-bottom: 1.5rem;
+}
+
+/* ======= FORMULAIRES & BOUTONS ======= */
+input,
+textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button,
+.btn {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+button:hover,
+.btn:hover {
+  background-color: #00d5ff;
+}
+
+.btn-outline-primary {
+  background: none;
+  border: 1px solid #00d5ff;
+  color: #00d5ff;
+}
+.btn-outline-primary:hover {
+  background-color: #00d5ff;
+  color: white;
+}
+
+.btn-outline-warning {
+  background: none;
+  border: 1px solid #ffc107;
+  color: #ffc107;
+}
+.btn-outline-warning:hover {
+  background-color: #ffc107;
+  color: black;
+}
+
+.btn-outline-danger {
+  background: none;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+}
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+
+/* ======= IMAGES FLUIDES ======= */
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ======= GRILLE DE PROJETS (Kanban ou Liste) ======= */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ======= MODE GALERIE ======= */
+.project-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.project-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+}
+.project-card:hover {
+  transform: scale(1.02);
+}
+
+/* ======= TRELLO VIEW ======= */
+.trello-board {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 1rem;
+}
+
+.trello-card {
+  min-width: 280px;
+  max-width: 320px;
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+  border: 1px solid #eee;
+  transition: transform 0.2s ease-in-out;
+}
+.trello-card:hover {
+  transform: scale(1.03);
+}
+
+/* ======= VUE KANBAN ======= */
+.kanban-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 2rem;
+}
+
+.kanban-column {
+  min-width: 280px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  flex-shrink: 0;
+}
+
+.kanban-title {
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.kanban-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 100px;
+}
+
+.kanban-card {
+  background: white;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 6px;
+  cursor: grab;
+  transition: transform 0.2s ease;
+}
+.kanban-card:hover {
+  transform: scale(1.03);
+}
+
+/* ======= RESPONSIVE ======= */
 @media (max-width: 768px) {
-    .container {
-      padding: 10px;
-      flex-direction: column;
-    }
-  
-    .card {
-      width: 100%;
-      margin-bottom: 20px;
-    }
-  
-    nav ul {
-      flex-direction: column;
-      align-items: flex-start;
-    }
+  body {
+    flex-direction: column;
   }
-  
-  /* Pour les écrans moyens et plus larges (tablettes et plus) */
-  @media (min-width: 769px) {
-    .container {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-    }
-  
-    .card {
-      width: 48%;
-    }
+
+  .sidebar {
+    width: 100%;
   }
-  
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .projects-grid,
+  .project-gallery {
+    grid-template-columns: 1fr; /* ✅ conserve ce comportement pour mobile */
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+.project-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.project-card {
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+  height: 100%;
+}
+
+.project-card:hover {
+  transform: scale(1.02);
+}

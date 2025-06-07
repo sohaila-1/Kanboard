@@ -11,5 +11,7 @@ RUN apt-get update && apt-get install -y \
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
+CMD php artisan serve --host=0.0.0.0 --port=8890
 WORKDIR /var/www
+
+
