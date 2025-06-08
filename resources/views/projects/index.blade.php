@@ -30,12 +30,12 @@
                 <p class="text-muted mb-2">{{ $project->description ?? 'projet' }}</p>
 
                 <div class="d-flex flex-wrap gap-2">
-                    <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-outline-primary">📄 Voir</a>
-                    <a href="{{ route('projects.edit', $project) }}" class="btn btn-sm btn-outline-warning">✏️ Modifier</a>
+                    <a href="{{ route('projects.show', $project) }}" class="btn-icon" title="Voir">📄</a>
+                    <a href="{{ route('projects.edit', $project) }}"class="btn-icon" title="Modifier">✏️</a>
                     <form action="{{ route('projects.destroy', $project) }}" method="POST" class="d-inline">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-sm btn-outline-danger" type="submit">🗑 Supprimer</button>
+                        <button class="btn-icon" type="submit" title="Supprimer">🗑️</button>
                     </form>
                 </div>
             </div>

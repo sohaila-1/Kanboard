@@ -3,26 +3,25 @@
 @section('title', 'Créer une tâche')
 
 @section('content')
-<div class="main-content">
-    <h2 class="mb-4">Ajouter une tâche au projet : <strong>{{ $project->title }}</strong></h2>
-
-    <form method="POST" action="{{ route('tasks.store', $project->id) }}">
+<div class="container">
+    <h2>Nouvelle Tâche</h2>
+    <form action="{{ route('tasks.store', $project) }}" method="POST">
         @csrf
 
         <div class="mb-3">
             <label for="title" class="form-label">Titre</label>
-            <input type="text" class="form-control" id="title" name="title" required>
+            <input type="text" name="title" id="title" class="form-control" required>
         </div>
 
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            <textarea name="description" id="description" class="form-control"></textarea>
         </div>
 
         <div class="mb-3">
-            <label for="category" class="form-label">Colonne (Kanban)</label>
-            <select name="category" id="category" class="form-select" required>
-                <option value="" disabled selected>-- Choisir une colonne --</option>
+            <label for="category" class="form-label">Catégorie</label>
+            <select name="category" id="category" class="form-select">
+                <option value="">-- Sélectionner --</option>
                 <option value="à faire">À faire</option>
                 <option value="en cours">En cours</option>
                 <option value="fait">Fait</option>
@@ -30,7 +29,17 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Créer la tâche</button>
+        <div class="mb-3">
+            <label for="due_date" class="form-label">📅 Date limite</label>
+            <input type="date" name="due_date" id="due_date" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="due_time" class="form-label">🕒 Heure</label>
+            <input type="time" name="due_time" id="due_time" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Créer</button>
     </form>
 </div>
 @endsection

@@ -33,7 +33,8 @@
 
         <a href="{{ route('tasks.create', $project) }}" class="btn btn-sm btn-outline-primary">➕ Nouvelle tâche</a>
         <a href="{{ route('projects.kanban', $project) }}" class="btn btn-sm btn-outline-primary">🌈 Vue Kanban</a>
-        <a href="{{ route('projects.calendar', $project) }}" class="btn btn-sm btn-outline-info">📅 Vue Calendrier</a>
+        <a href="{{ route('projects.calendar', $project) }}" class="btn btn-outline-info">📅 Vue Calendrier</a>
+
         <a href="{{ route('projects.index') }}" class="btn btn-sm btn-outline-dark">⬅️ Retour</a>
     </div>
 

@@ -1,32 +1,35 @@
 @extends('layouts.app')
 
-@section('title', 'Calendrier des tâches')
+@section('title', $project->title . ' — Vue Calendrier')
 
 @section('content')
-<div class="container mt-4">
-    <h2 class="mb-4">📅 Calendrier du projet : {{ $project->title }}</h2>
-
+<div class="container-fluid px-3 px-md-5 mt-4">
+    <h4>{{ $project->title }} — Vue Calendrier</h4>
     <div id="calendar"></div>
 </div>
 @endsection
 
 @section('scripts')
-<!-- FullCalendar CSS & JS -->
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css' rel='stylesheet' />
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js'></script>
-
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
-
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'fr',
-            height: 'auto',
-            events: @json($events)
-        });
-
-        calendar.render();
+document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek', // vue avec les heures
+        locale: 'fr',
+        slotMinTime: "06:00:00",
+        slotMaxTime: "22:00:00",
+        slotDuration: "00:30:00",
+        allDaySlot: false,
+        height: "auto",
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: @json($events)
     });
+    calendar.render();
+});
 </script>
 @endsection

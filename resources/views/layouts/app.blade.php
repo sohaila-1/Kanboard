@@ -91,6 +91,16 @@
 
             <a href="{{ route('projects.create') }}">➕ Nouveau projet</a>
             <a href="{{ route('projects.index') }}">📁 Mes projets</a>
+                {{-- Bouton retour contextuel --}}
+            @if (Str::contains(Request::url(), ['kanban', 'calendar']))
+            <a href="{{ route('projects.show', $project ?? request()->route('project')) }}" >⬅️ Retour au {{ $project->title }}</a>
+            @endif
+            <div class="mt-4">
+                <button id="toggle-dark" class="btn btn-sm btn-outline-dark w-100">
+                        🌙 Mode sombre
+                </button>
+            </div>
+
 
             @auth
                 <a href="#">⚙️ Modifier profil</a>
@@ -99,7 +109,7 @@
                     <button type="submit" class="btn btn-outline-danger w-100 mt-3">🚪 Se déconnecter</button>
                 </form>
             @endauth
-
+            
             @guest
                 <div class="mt-auto">
                     <a href="{{ route('register') }}" class="btn btn-outline-primary w-100 mb-2">📝 S'inscrire</a>
@@ -116,7 +126,20 @@
     <footer>
         © {{ date('Y') }} Kanboard — Tous droits réservés.
     </footer>
+    <script>
+        // Toggle Dark Mode
+        const toggleBtn = document.getElementById('toggle-dark');
+        const html = document.documentElement;
 
+        if (localStorage.getItem('theme') === 'dark') {
+            html.classList.add('dark-mode');
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark-mode');
+            localStorage.setItem('theme', html.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @yield('scripts')
 </body>

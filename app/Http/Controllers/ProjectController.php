@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ProjectController extends Controller
 {
@@ -143,23 +144,32 @@ public function kanban(Project $project)
 
 
 
-
-    public function calendar(Project $project)
+public function calendar(Project $project)
 {
-    $tasks = $project->tasks()
-        ->select('title', 'due_date')
-        ->whereNotNull('due_date')
-        ->get();
+    $events = [];
 
-    $events = $tasks->map(function ($task) {
-        return [
-            'title' => $task->title,
-            'start' => $task->due_date
-        ];
-    });
+    foreach ($project->tasks as $task) {
+        if ($task->due_date) {
+            $events[] = [
+                'title' => $task->title,
+                'start' => Carbon::parse($task->due_date)->format('Y-m-d\TH:i:s'),
+                'color' => match($task->category) {
+                    'fait' => '#28a745',
+                    'en cours' => '#ffc107',
+                    'annulé' => '#dc3545',
+                    default => '#007bff',
+                }
+            ];
+        }
+    }
 
-    return view('projects.calendar', compact('project', 'events'));
+    return view('projects.calendar', [
+        'project' => $project,
+        'events' => $events,
+    ]);
 }
+
+
 
      
 
