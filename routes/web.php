@@ -1,11 +1,14 @@
 <?php
-
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardController; 
 
+// Route d'accueil
+Route::get('/', function () {
+    return view('welcome'); // ou 'home' si tu as une autre vue
+})->name('home');
 Route::resource('projects', ProjectController::class);
 Route::resource('tasks', TaskController::class);
 Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
@@ -24,12 +27,6 @@ Route::post('/tasks/{task}/move', [TaskController::class, 'move'])->name('tasks.
 Route::get('/projects/{project}/calendar', [\App\Http\Controllers\ProjectController::class, 'calendar'])->name('projects.calendar');
 Route::get('/projects/{project}/members/add', [ProjectMemberController::class, 'create'])->name('projects.members.add');
 Route::get('/projects/{project}/calendar', [ProjectController::class, 'calendar'])->name('projects.calendar');
-
-
-
-Route::get('/', function () {
-    return view('welcome');
-});
 Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth']) // <- sans "verified"
     ->name('dashboard');

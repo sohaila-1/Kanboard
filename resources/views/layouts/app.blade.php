@@ -87,8 +87,11 @@
 <body>
     <div class="page-wrapper">
         <div class="sidebar">
-            <h4 class="text-center fw-bold mb-4">📌 Kanboard</h4>
-
+            @if (!request()->is('/'))
+                <a href="{{ route('home') }}" class="text-center fw-bold mb-4">
+                    <span class="text-center fw-bold mb-4">🏠</span> Accueil
+                </a>
+            @endif
             <a href="{{ route('projects.create') }}">➕ Nouveau projet</a>
             <a href="{{ route('projects.index') }}">📁 Mes projets</a>
                 {{-- Bouton retour contextuel --}}
