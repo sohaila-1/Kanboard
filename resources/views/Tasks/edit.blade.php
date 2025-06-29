@@ -5,7 +5,7 @@
 @section('content')
 <div class="container">
     <h2>Modifier la Tâche</h2>
-    <form action="{{ route('tasks.update', [$projectId, $task]) }}" method="POST">
+    <form action="{{ route('tasks.update', ['project' => $project->id, 'task' => $task->id]) }}" method="POST">
         @csrf
         @method('PUT')
 

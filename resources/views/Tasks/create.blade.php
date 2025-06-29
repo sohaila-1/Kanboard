@@ -4,8 +4,9 @@
 
 @section('content')
 <div class="container">
-    <h2>Nouvelle Tâche</h2>
-    <form action="{{ route('tasks.store', $project) }}" method="POST">
+    <h2>Nouvelle Tâche pour le projet : {{ $project->title }}</h2>
+
+    <form method="POST" action="{{ route('tasks.store', ['project' => $project->id]) }}">
         @csrf
 
         <div class="mb-3">

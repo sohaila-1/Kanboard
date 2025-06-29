@@ -3,19 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Project; 
 use App\Models\Task;
+use App\Models\Project;
 
 class TaskController extends Controller
 {
-    public function index() {}
-
     public function create(Project $project)
     {
         return view('tasks.create', compact('project'));
     }
 
-    public function store(Request $request, $projectId)
+    public function store(Request $request, Project $project)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -27,8 +25,6 @@ class TaskController extends Controller
         $datetime = null;
         if (!empty($validated['due_date']) && $request->filled('due_time')) {
             $datetime = $validated['due_date'] . ' ' . $request->input('due_time') . ':00';
-        } elseif (!empty($validated['due_date'])) {
-            $datetime = $validated['due_date'] . ' 00:00:00';
         }
 
         Task::create([
@@ -36,32 +32,20 @@ class TaskController extends Controller
             'description' => $validated['description'] ?? null,
             'category' => strtolower(trim($validated['category'] ?? 'à faire')),
             'due_date' => $datetime,
-            'project_id' => $projectId,
+            'project_id' => $project->id,
+            'user_id' => auth()->id(),
         ]);
 
-        return redirect()->route('projects.show', $projectId)
+        return redirect()->route('projects.show', $project->id)
             ->with('success', 'Tâche ajoutée avec succès.');
     }
 
-    public function move(Request $request, Task $task)
+    public function edit(Project $project, Task $task)
     {
-        $task->category = strtolower(trim($request->category));
-        $task->save();
-
-        return response()->json(['status' => 'ok']);
+        return view('tasks.edit', compact('project', 'task'));
     }
 
-    public function show(string $id) {}
-
-    public function edit($projectId, Task $task)
-    {
-        return view('tasks.edit', [
-            'task' => $task,
-            'projectId' => $projectId,
-        ]);
-    }
-
-    public function update(Request $request, $projectId, Task $task)
+    public function update(Request $request, Project $project, Task $task)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -73,8 +57,6 @@ class TaskController extends Controller
         $datetime = null;
         if (!empty($validated['due_date']) && $request->filled('due_time')) {
             $datetime = $validated['due_date'] . ' ' . $request->input('due_time') . ':00';
-        } elseif (!empty($validated['due_date'])) {
-            $datetime = $validated['due_date'] . ' 00:00:00';
         }
 
         $task->update([
@@ -84,35 +66,23 @@ class TaskController extends Controller
             'due_date' => $datetime,
         ]);
 
-        return redirect()->route('projects.show', $projectId)
-            ->with('success', 'Tâche mise à jour.');
+        return redirect()->route('projects.show', $project->id)
+            ->with('success', 'Tâche modifiée avec succès.');
     }
 
-    public function destroy($projectId, Task $task)
+    public function destroy(Project $project, Task $task)
     {
         $task->delete();
 
-        return redirect()->route('projects.show', $projectId)->with('success', 'Tâche supprimée.');
+        return redirect()->route('projects.show', $project->id)
+            ->with('success', 'Tâche supprimée avec succès.');
     }
 
-    public function list(Request $request, Project $project)
+    public function move(Request $request, Task $task)
     {
-        $query = $project->tasks();
+        $task->category = strtolower(trim($request->category));
+        $task->save();
 
-        if ($request->filled('title')) {
-            $query->where('title', 'like', '%' . $request->title . '%');
-        }
-
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->filled('description')) {
-            $query->where('description', 'like', '%' . $request->description . '%');
-        }
-
-        $tasks = $query->get();
-
-        return view('tasks.list', compact('project', 'tasks'));
+        return response()->json(['success' => true]);
     }
 }

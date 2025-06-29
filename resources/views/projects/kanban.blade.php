@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="main-content">
-    <h2 class="mb-4">{{ $project->title }} — Vue Kanban</h2>
+    <h2 class="mb-5 text-center display-6">{{ $project->title }} — Vue Kanban</h2>
 
     <div class="kanban-wrapper d-flex gap-3">
         @foreach ($columns as $status => $tasks)
@@ -20,18 +20,23 @@
 
                     @foreach ($tasks as $task)
                         <div class="kanban-card" draggable="true" ondragstart="drag(event)" id="task-{{ $task->id }}">
-                            <div class="d-flex justify-content-between">
-                                <strong>{{ $task->title }}</strong>
-                                <div class="d-flex gap-1">
-                                    <a href="{{ route('tasks.edit', [$project->id, $task->id]) }}" class="btn btn-sm btn-outline-secondary px-2">✏️</a>
-                                    <form method="POST" action="{{ route('tasks.destroy', [$project->id, $task->id]) }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger px-2">🗑️</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong>{{ $task->title }} 👤 {{ $task->user->name ?? 'Inconnu' }}</strong>
+                            <div class="d-flex gap-1">
+            <a href="{{ route('tasks.edit', ['project' => $project->id, 'task' => $task->id]) }}" class="btn btn-sm btn-outline-secondary px-2">✏️</a>
+            <form method="POST" action="{{ route('tasks.destroy', ['project' => $project->id, 'task' => $task->id]) }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-outline-danger px-2">🗑️</button>
+            </form>
+        </div>
+    </div>
+ 
+    <div class="mt-2 text-end small text-muted">
+        👤 {{ $task->user->name ?? 'Inconnu' }}
+    </div>
+</div>
+
                     @endforeach
 
                     <a href="{{ route('tasks.create', ['project' => $project->id, 'category' => $status]) }}"
@@ -81,20 +86,22 @@
 <style>
     .kanban-wrapper {
         display: flex;
-        gap: 1.5rem;
-        overflow-x: auto;
-        padding-bottom: 2rem;
+        gap: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 2rem 0;
         align-items: flex-start;
     }
 
+
     .kanban-column {
-        min-width: 250px;
-        max-width: 300px;
-        flex: 1;
+        width: 300px;
         background: #f9fafb;
         border-radius: 8px;
         padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+
 
     .kanban-title {
         text-align: center;
@@ -117,17 +124,17 @@
         max-height: 500px;
         overflow-y: auto;
     }
-
     .kanban-card {
-        padding: 0.5rem;
+        padding: 0.75rem;
         background: white;
         border: 1px solid #ddd;
-        border-radius: 6px;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         transition: transform 0.2s ease;
         cursor: grab;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
+
 
     .kanban-card:hover {
         transform: scale(1.01);

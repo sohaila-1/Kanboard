@@ -38,10 +38,6 @@ git clone https://github.com/votre-utilisateur/kanboard.git
 cd kanboard
 2️⃣ Installer les dépendances PHP avec Composer
 Assurez-vous d’avoir Composer installé sur votre machine.
-
-bash
-Copy
-Edit
 composer install
 3️⃣ Copier le fichier .env et générer la clé Laravel
 bash

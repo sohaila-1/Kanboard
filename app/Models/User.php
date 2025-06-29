@@ -10,13 +10,8 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    use Notifiable;
+    
     protected $fillable = [
         'name',
         'email',
@@ -45,4 +40,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+    public function sharedProjects()
+    {
+    return $this->belongsToMany(Project::class, 'project_user');
+    }
+
 }

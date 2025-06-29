@@ -18,7 +18,6 @@
 
     <!-- 🔍 Barre d’action -->
     <div class="d-flex flex-wrap gap-2 align-items-center mb-4">
-        <!-- Formulaire de recherche -->
         <form method="GET" action="{{ route('projects.show', $project) }}" class="d-flex">
             <input
                 type="text"
@@ -34,7 +33,6 @@
         <a href="{{ route('tasks.create', $project) }}" class="btn btn-sm btn-outline-primary">➕ Nouvelle tâche</a>
         <a href="{{ route('projects.kanban', $project) }}" class="btn btn-sm btn-outline-primary">🌈 Vue Kanban</a>
         <a href="{{ route('projects.calendar', $project) }}" class="btn btn-outline-info">📅 Vue Calendrier</a>
-
         <a href="{{ route('projects.index') }}" class="btn btn-sm btn-outline-dark">⬅️ Retour</a>
     </div>
 
@@ -43,7 +41,7 @@
         <div class="alert alert-info text-center py-4">
             <h5 class="mb-3">📭 Aucune tâche trouvée</h5>
             <p>Ce projet ne contient encore aucune tâche correspondant à votre recherche.</p>
-            <a href="{{ route('tasks.create', $project) }}" class="btn btn-sm btn-outline-primary float-end">
+            <a href="{{ route('tasks.create', ['project' => $project->id]) }}" class="btn btn-sm btn-outline-primary">
                 ➕ Ajouter une première tâche
             </a>
         </div>
@@ -90,5 +88,46 @@
         </div>
     @endif
 
+<!-- 👥 Membres du projet (style Trello) -->
+<h6 class="mt-5 mb-2 text-muted d-flex align-items-center">
+    <span class="me-2">👥</span> Membres :
+</h6>
+
+<div class="d-flex align-items-center gap-2 flex-wrap">
+    <!-- Créateur -->
+    <div class="position-relative" title="{{ $project->creator->name }} – Créateur">
+        <div class="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
+            style="width: 36px; height: 36px; font-size: 14px; font-weight: bold;">
+            {{ strtoupper(substr($project->creator->name, 0, 1)) }}
+        </div>
+    </div>
+
+    <!-- Membres -->
+    @foreach ($project->members as $member)
+        @if ($member->id !== $project->user_id)
+            @php
+                $bg = $member->id === auth()->id() ? 'bg-success' : 'bg-secondary';
+                $role = $member->id === auth()->id() ? 'Moi' : 'Membre';
+            @endphp
+            <div class="position-relative" title="{{ $member->name }} – {{ $role }}">
+                <div class="rounded-circle text-white d-flex justify-content-center align-items-center {{ $bg }}"
+                    style="width: 36px; height: 36px; font-size: 14px; font-weight: bold;">
+                    {{ strtoupper(substr($member->name, 0, 1)) }}
+                </div>
+
+                {{-- Bouton de suppression visible seulement pour le créateur --}}
+                @if(auth()->id() === $project->user_id)
+                    <form action="{{ route('projects.members.destroy', [$project, $member]) }}" method="POST"
+                        onsubmit="return confirm('Retirer {{ $member->name }} du projet ?')"
+                        style="position: absolute; top: -6px; right: -6px;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-close btn-sm p-0" style="width: 14px; height: 14px;" title="Retirer"></button>
+                    </form>
+                @endif
+            </div>
+        @endif
+    @endforeach
+</div>
 </div>
 @endsection

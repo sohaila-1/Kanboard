@@ -35,14 +35,6 @@
             padding: 2rem 1rem;
         }
 
-        .sidebar h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #111;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
         .sidebar a {
             color: #333;
             display: flex;
@@ -69,7 +61,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 2rem;
-            width: 100%; /* ✅ assure largeur plein écran */
+            width: 100%;
         }
 
         footer {
@@ -81,38 +73,86 @@
             color: #888;
             border-top: 1px solid #ddd;
         }
+
+        /* 🌙 Dark mode styles */
+        .dark-mode {
+            background-color: #2D4C63 !important;
+            color: #f0f0f0;
+        }
+
+        .dark-mode .sidebar {
+            background-color: #333 !important;
+            color: #f0f0f0;
+        }
+
+        .dark-mode .sidebar a {
+            color: #f0f0f0;
+        }
+
+        .dark-mode .sidebar a:hover {
+            background-color: #3F6B6D;
+        }
+
+        .dark-mode .main-content {
+            background-color: #1e2b38;
+            color: #e6e6e6;
+        }
+
+        .dark-mode footer {
+            background: #2D4C63;
+            color: #ccc;
+        }
+
+        .dark-mode .btn-outline-dark {
+            background-color: #800020;
+            color: white;
+            border-color: #800020;
+        }
     </style>
 </head>
 
 <body>
     <div class="page-wrapper">
         <div class="sidebar">
+
+            <!-- Accueil aligné -->
             @if (!request()->is('/'))
-                <a href="{{ route('home') }}" class="text-center fw-bold mb-4">
-                    <span class="text-center fw-bold mb-4">🏠</span> Accueil
+                <a href="{{ route('home') }}" class="d-flex align-items-center fw-bold mb-4 gap-2">
+                    🏠 <span>Accueil</span>
                 </a>
             @endif
+
             <a href="{{ route('projects.create') }}">➕ Nouveau projet</a>
             <a href="{{ route('projects.index') }}">📁 Mes projets</a>
-                {{-- Bouton retour contextuel --}}
+
+            {{-- Retour contextuel --}}
             @if (Str::contains(Request::url(), ['kanban', 'calendar']))
-            <a href="{{ route('projects.show', $project ?? request()->route('project')) }}" >⬅️ Retour au {{ $project->title }}</a>
+                <a href="{{ route('projects.show', $project ?? request()->route('project')) }}">
+                    ⬅️ Retour au {{ $project->title ?? 'projet' }}
+                </a>
             @endif
+
             <div class="mt-4">
                 <button id="toggle-dark" class="btn btn-sm btn-outline-dark w-100">
-                        🌙 Mode sombre
+                    🌙 Mode sombre
                 </button>
             </div>
+            @auth
+            @if (isset($project))
+        <a href="{{ route('projects.kanban', $project->id) }}">🌈 Vue Kanban</a>
+        <a href="{{ route('projects.calendar', $project->id) }}">📅 Vue Calendrier</a>
+            @endif
+            @endauth
 
 
             @auth
-                <a href="#">⚙️ Modifier profil</a>
                 <form action="{{ route('logout') }}" method="POST" class="mt-auto">
                     @csrf
+                    <a href="#">⚙️ Modifier profil</a>
                     <button type="submit" class="btn btn-outline-danger w-100 mt-3">🚪 Se déconnecter</button>
                 </form>
             @endauth
-            
+
             @guest
                 <div class="mt-auto">
                     <a href="{{ route('register') }}" class="btn btn-outline-primary w-100 mb-2">📝 S'inscrire</a>
@@ -129,8 +169,9 @@
     <footer>
         © {{ date('Y') }} Kanboard — Tous droits réservés.
     </footer>
+
+    <!-- 🌙 Dark Mode Script -->
     <script>
-        // Toggle Dark Mode
         const toggleBtn = document.getElementById('toggle-dark');
         const html = document.documentElement;
 
@@ -138,11 +179,12 @@
             html.classList.add('dark-mode');
         }
 
-        toggleBtn.addEventListener('click', () => {
+        toggleBtn?.addEventListener('click', () => {
             html.classList.toggle('dark-mode');
             localStorage.setItem('theme', html.classList.contains('dark-mode') ? 'dark' : 'light');
         });
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @yield('scripts')
 </body>

@@ -15,15 +15,22 @@ class ProjectController extends Controller
 public function index(Request $request)
 {
     $search = $request->input('search');
+    $userId = auth()->id();
 
-    $projects = \App\Models\Project::where('user_id', auth()->id())
+    $projects = \App\Models\Project::where(function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                  ->orWhereHas('members', function ($q) use ($userId) {
+                      $q->where('user_id', $userId);
+                  });
+        })
         ->when($search, function ($query, $search) {
-            return $query->where('title', 'like', "%{$search}%");
+            $query->where('title', 'like', "%{$search}%");
         })
         ->get();
 
     return view('projects.index', compact('projects'));
 }
+
 
     
     
@@ -61,25 +68,33 @@ public function index(Request $request)
     /**
      * Display the specified resource.
      */
-    public function show(Project $project, Request $request)
-    {
-        if ($project->user_id !== auth()->id()) {
-            abort(403); // 🔒 Bloque l'accès si ce n'est pas le propriétaire
-        }
+public function show(Project $project, Request $request)
+{
+    $user = auth()->user();
 
-        $search = $request->input('search');
-
-        $tasks = $project->tasks()
-            ->when($search, function ($query, $search) {
-                return $query->where('title', 'like', "%{$search}%");
-            })
-            ->get();
-
-        return view('projects.show', [
-            'project' => $project,
-            'tasks' => $tasks
-        ]);
+    if (
+        $project->user_id !== $user->id &&
+        !$project->members->contains($user->id)
+    ) {
+        abort(403);
     }
+
+    $search = $request->input('search');
+
+    $project->load('tasks', 'members', 'creator');
+
+    $tasks = $project->tasks()
+        ->when($search, function ($query, $search) {
+            return $query->where('title', 'like', "%{$search}%");
+        })
+        ->get();
+
+    return view('projects.show', [
+        'project' => $project,
+        'tasks' => $tasks,
+    ]);
+}
+
 
 
     /**
@@ -118,13 +133,20 @@ public function index(Request $request)
      */
     public function destroy(Project $project)
     {
+        if ($project->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $project->delete();
-    
         return redirect()->route('projects.index')->with('success', 'Projet supprimé avec succès.');
     }
 
 public function kanban(Project $project)
 {
+    if ($project->user_id !== auth()->id()) {
+    abort(403);
+}
+
     $tasks = $project->tasks;
 
     $columns = [
@@ -146,6 +168,10 @@ public function kanban(Project $project)
 
 public function calendar(Project $project)
 {
+    if ($project->user_id !== auth()->id()) {
+    abort(403);
+}
+
     $events = [];
 
     foreach ($project->tasks as $task) {
