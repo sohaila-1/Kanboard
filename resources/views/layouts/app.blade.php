@@ -117,9 +117,8 @@
 
             <!-- Accueil aligné -->
             @if (!request()->is('/'))
-                <a href="{{ route('home') }}" class="d-flex align-items-center fw-bold mb-4 gap-2">
-                    🏠 <span>Accueil</span>
-                </a>
+               <a href="{{ route('dashboard') }}">Accueil</a>
+
             @endif
 
             <a href="{{ route('projects.create') }}">➕ Nouveau projet</a>
@@ -132,11 +131,6 @@
                 </a>
             @endif
 
-            <div class="mt-4">
-                <button id="toggle-dark" class="btn btn-sm btn-outline-dark w-100">
-                    🌙 Mode sombre
-                </button>
-            </div>
             @auth
             @if (isset($project))
         <a href="{{ route('projects.kanban', $project->id) }}">🌈 Vue Kanban</a>
@@ -152,13 +146,12 @@
                     <button type="submit" class="btn btn-outline-danger w-100 mt-3">🚪 Se déconnecter</button>
                 </form>
             @endauth
+                        <div class="mt-4">
+                <button id="toggle-dark" class="btn btn-sm btn-outline-dark w-100">
+                    🌙 Mode sombre
+                </button>
+            </div>
 
-            @guest
-                <div class="mt-auto">
-                    <a href="{{ route('register') }}" class="btn btn-outline-primary w-100 mb-2">📝 S'inscrire</a>
-                    <a href="{{ route('login') }}" class="btn btn-outline-secondary w-100">🔐 Se connecter</a>
-                </div>
-            @endguest
         </div>
 
         <div class="main-content">

@@ -3,57 +3,50 @@
 @section('title', 'Tableau de bord')
 
 @section('content')
-<div class="container-fluid mt-4">
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="text-center">🧭 Menu</h5>
-                    <hr>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">
-                            <a href="{{ route('projects.create') }}" class="btn btn-outline-primary w-100">➕ Nouveau projet</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="{{ route('projects.index') }}" class="btn btn-outline-secondary w-100">📁 Voir mes projets</a>
-                        </li>
-                        <li class="mb-2">
-                            <a href="#" class="btn btn-outline-info w-100">⚙️ Modifier mes infos</a> {{-- à implémenter --}}
-                        </li>
-                        <li>
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-outline-danger w-100">🚪 Se déconnecter</button>
-                            </form>
-                        </li>
-                    </ul>
+<link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+
+<div class="dashboard-container">
+
+    <!-- 🔹 Résumé -->
+    <section class="box">
+        <h2>📊 Résumé</h2>
+        <p>Vous avez <strong>{{ $projects_count }}</strong> projet(s) et <strong>{{ $tasks_count }}</strong> tâche(s) au total.</p>
+    </section>
+
+    <!-- 🔹 Mes projets -->
+    <section class="box">
+        <h2>📁 Mes projets</h2>
+        <a href="{{ route('projects.create') }}" class="btn-new">+ Nouveau projet</a>
+
+        @forelse($projects as $project)
+            <div class="item">
+                <div>
+                    <strong>{{ $project->title }}</strong><br>
+                    <span>{{ $project->tasks_count }} tâches</span>
+                </div>
+                <a href="{{ route('projects.show', $project) }}" class="btn">Voir</a>
+            </div>
+        @empty
+            <p>Vous n'avez pas encore de projet. Cliquez sur <strong>+ Nouveau projet</strong> pour commencer !</p>
+        @endforelse
+    </section>
+
+    <!-- 🔹 Tâches urgentes -->
+    <section class="box">
+        <h2>📌 Tâches urgentes / à venir</h2>
+
+        @forelse($tasks as $task)
+            <div class="item">
+                <div>
+                    <strong>{{ $task->title }}</strong><br>
+                    📅 {{ $task->due_date ? $task->due_date->format('d/m/Y') : 'Pas de deadline' }}<br>
+                    🔺 Priorité : <span class="priority {{ strtolower($task->priority) }}">{{ ucfirst($task->priority) }}</span>
                 </div>
             </div>
-        </div>
+        @empty
+            <p>Aucune tâche urgente</p>
+        @endforelse
+    </section>
 
-        <!-- Contenu principal -->
-        <div class="col-md-9">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <h2>👋 Bienvenue <span class="text-primary">{{ Auth::user()->name }}</span></h2>
-                    <p class="text-muted">Voici un aperçu de votre activité :</p>
-
-                    <hr>
-
-                    <ul class="list-group list-group-flush mb-3">
-                        <li class="list-group-item">
-                            📁 <strong>{{ $projects_count }}</strong> projet(s) créé(s)
-                        </li>
-                        <li class="list-group-item">
-                            ✅ <strong>{{ $tasks_count }}</strong> tâche(s) au total
-                        </li>
-                    </ul>
-
-                    <a href="{{ route('projects.index') }}" class="btn btn-dark">📂 Voir mes projets</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 @endsection

@@ -13,8 +13,11 @@ use Illuminate\Http\Request;
 
 // Accueil
 Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : view('welcome');
+});
+
 
 // AUTHENTIFICATION 
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
