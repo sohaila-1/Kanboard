@@ -142,7 +142,11 @@
             @auth
                 <form action="{{ route('logout') }}" method="POST" class="mt-auto">
                     @csrf
-                    <a href="#">⚙️ Modifier profil</a>
+                    <li class="nav-item">
+                    <a href="{{ route('profile.edit') }}" class="nav-link">
+                        ⚙️ Modifier profil
+                    </a>
+                    </li>
                     <button type="submit" class="btn btn-outline-danger w-100 mt-3">🚪 Se déconnecter</button>
                 </form>
             @endauth

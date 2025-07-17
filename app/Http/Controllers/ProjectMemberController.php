@@ -10,45 +10,37 @@ use Illuminate\Support\Facades\DB;
 class ProjectMemberController extends Controller
 {
     public function create(Project $project)
-    {
-        if ($project->user_id !== auth()->id()) {
-            abort(403);
-        }
+{
+    $project->load('members');
+    return view('projects.members.add', compact('project'));
+}
 
-        return view('projects.members.add', compact('project'));
-    }
 
     public function store(Request $request, Project $project)
-    {
-        if ($project->user_id !== auth()->id()) {
-            abort(403);
-        }
-
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if ($project->members->contains($user->id)) {
-            return redirect()->back()->with('error', 'Cet utilisateur est déjà membre.');
-        }
-
-        $project->members()->attach($user->id);
-
-        return redirect()->route('projects.show', $project)->with('success', 'Membre ajouté avec succès.');
-    }
-    public function destroy($projectId, $memberId)
 {
-    // On supprime le membre du projet
-    DB::table('project_members')
-        ->where('project_id', $projectId)
-        ->where('user_id', $memberId)
-        ->delete();
+    $request->validate(['email' => 'required|email']);
 
-    return redirect()->route('projects.show', $projectId)
-                     ->with('success', 'Membre retiré avec succès.');
+    $user = \App\Models\User::where('email', $request->email)->first();
+
+    if (!$user) {
+        return back()->withErrors(['email' => 'Utilisateur introuvable.']);
+    }
+
+    if ($project->members->contains($user->id)) {
+        return back()->withErrors(['email' => 'Cet utilisateur est déjà membre.']);
+    }
+
+    $project->members()->attach($user->id);
+
+    return back()->with('success', 'Membre ajouté avec succès.');
 }
+
+    public function destroy(Project $project, \App\Models\User $member)
+{
+    $project->members()->detach($member->id);
+    return back()->with('success', 'Membre retiré.');
+}
+
 
 }
 

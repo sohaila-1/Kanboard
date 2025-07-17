@@ -33,13 +33,14 @@ class Project extends Model
         return $this->hasMany(Task::class);
     }
 
-    public function members()
-{
-    return $this->belongsToMany(User::class, 'project_user');
-}
-public function creator()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
+        public function members()
+    {
+        return $this->belongsToMany(User::class, 'project_user');
+    }
+    
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
 }

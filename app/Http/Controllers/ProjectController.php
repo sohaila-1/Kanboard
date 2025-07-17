@@ -32,21 +32,11 @@ public function index(Request $request)
 }
 
 
-    
-    
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('projects.create');
     }
     
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -64,30 +54,29 @@ public function index(Request $request)
     }
     
     
-
-    /**
-     * Display the specified resource.
-     */
 public function show(Project $project, Request $request)
 {
     $user = auth()->user();
 
+  
     if (
         $project->user_id !== $user->id &&
         !$project->members->contains($user->id)
     ) {
         abort(403);
     }
-
-    $search = $request->input('search');
-
     $project->load('tasks', 'members', 'creator');
 
+    // Recherche (si une barre de recherche existe)
+    $search = $request->input('search');
+
     $tasks = $project->tasks()
+        ->with('creator') 
         ->when($search, function ($query, $search) {
             return $query->where('title', 'like', "%{$search}%");
         })
         ->get();
+
 
     return view('projects.show', [
         'project' => $project,
@@ -96,10 +85,6 @@ public function show(Project $project, Request $request)
 }
 
 
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Project $project)
     {
         if ($project->user_id !== auth()->id()) {
@@ -127,6 +112,7 @@ public function show(Project $project, Request $request)
     
         return redirect()->route('projects.index')->with('success', 'Projet mis à jour avec succès.');
     }
+
 
     /**
      * Remove the specified resource from storage.

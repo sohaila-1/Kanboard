@@ -25,6 +25,9 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
 
 // RESET PASSWORD 
 Route::get('/password/forgot', [PasswordResetController::class, 'showForgotForm'])->name('password.request');
@@ -68,7 +71,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/projects/{project}/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
     // Suppression d'une tâche
     Route::delete('/projects/{project}/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
-
+    Route::get('/projects/{project}/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
+    
+    
     // Dashboard
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     // Profile
