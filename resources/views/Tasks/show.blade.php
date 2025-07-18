@@ -10,15 +10,20 @@
         <p><strong>Description :</strong><br>{{ $task->description ?? '—' }}</p>
 
 
-        <p>
-            <strong>Priorité :</strong>
-            <span class="badge bg-{{ match($task->priority) {
-                'Élevée' => 'danger',
-                'Moyenne' => 'warning',
-                'Basse' => 'success',
-                default => 'secondary'
-            }}}">{{ $task->priority ?? 'Non définie' }}</span>
-        </p>
+            @php
+        $badgeClass = match($task->priority) {
+            'Élevée' => 'danger',
+            'Moyenne' => 'warning',
+            'Basse' => 'success',
+            default => 'secondary',
+        };
+    @endphp
+
+    <p>
+        <strong>Priorité :</strong>
+        <span class="badge bg-{{ $badgeClass }}">{{ $task->priority ?? 'Non définie' }}</span>
+    </p>
+
 
         @if ($task->due_date)
             <p><strong>Échéance :</strong> {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}</p>
