@@ -29,6 +29,7 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'nullable|string',
+            'priority' => 'nullable|string',
             'due_date' => 'nullable|date',
         ]);
 
@@ -41,6 +42,7 @@ class TaskController extends Controller
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'category' => strtolower(trim($validated['category'] ?? 'à faire')),
+            'priority' => $request->priority,
             'due_date' => $datetime,
             'project_id' => $project->id,
             'user_id' => auth()->id(),
@@ -69,6 +71,7 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'nullable|string',
+            'priority' => 'nullable|string',
             'due_date' => 'nullable|date',
         ]);
 
@@ -81,6 +84,7 @@ class TaskController extends Controller
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'category' => strtolower(trim($validated['category'] ?? 'à faire')),
+            'priority' => $request->priority,
             'due_date' => $datetime,
         ]);
 
