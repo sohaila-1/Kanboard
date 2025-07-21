@@ -1,69 +1,67 @@
 version: '3.8'
 
 services:
-  app:
-    container_name: kanboard_app
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "9000:9000"
-    volumes:
-      - ./:/var/www/html
-    depends_on:
-      - db
-    networks:
-      - kanboard
+    app:
+        container_name: kanboard_app
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "9000:9000"
+        volumes:
+            - ./:/var/www/html
+        depends_on:
+            - db
+        networks:
+            - kanboard
 
-  db:
-    image: mysql:8.0
-    container_name: kanboard_db
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: kanboard
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: kanboard_user
-      MYSQL_PASSWORD: kanboard_password
-    ports:
-      - "3307:3307"
-    volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - kanboard
+    db:
+        image: mysql:8.0
+        container_name: kanboard_db
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: kanboard
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: kanboard_user
+            MYSQL_PASSWORD: kanboard_password
+        ports:
+            - "3306:3306"  # port corrigé ici (3307:3307 n'est pas utilisé)
+        volumes:
+            - db_data:/var/lib/mysql
+        networks:
+            - kanboard
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: kanboard_phpmyadmin
-    restart: unless-stopped
-    ports:
-      - "8085:80"
-    environment:
-      PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: root
-    depends_on:
-      - db
-    networks:
-      - kanboard
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: kanboard_phpmyadmin
+        restart: unless-stopped
+        ports:
+            - "8085:80"
+        environment:
+            PMA_HOST: db
+            MYSQL_ROOT_PASSWORD: root
+        depends_on:
+            - db
+        networks:
+            - kanboard
 
-  nginx:
-    image: nginx:alpine
-    container_name: kanboard_nginx
-    ports:
-      - "8080:80"
-      - "8444:443"
-    volumes:
-      - ./nginx/conf:/etc/nginx/conf.d
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - ./:/var/www
-
-       
-    depends_on:
-      - app
-    networks:
-      - kanboard
+    nginx:
+        image: nginx:alpine
+        container_name: kanboard_nginx
+        ports:
+            - "8080:80"
+            - "8444:443"
+        volumes:
+            - ./nginx/conf:/etc/nginx/conf.d
+            - /etc/letsencrypt:/etc/letsencrypt:ro
+            - ./:/var/www
+        depends_on:
+            - app
+        networks:
+            - kanboard
 
 networks:
-  kanboard:
+    kanboard:
 
 volumes:
-  db_data:
+    db_data:
