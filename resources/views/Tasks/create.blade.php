@@ -32,7 +32,15 @@
                         <option value="annulé">Annulé</option>
                     </select>
                 </div>
-
+                <div class="mb-3">
+                    <label for="priority" class="form-label">⚠️ Priorité</label>
+                    <select name="priority" id="priority" class="form-select" required>
+                        <option value="">-- Choisir une priorité --</option>
+                        <option value="Élevée">Élevée</option>
+                        <option value="Moyenne">Moyenne</option>
+                        <option value="Basse">Basse</option>
+                    </select>
+                </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="due_date" class="form-label">📅 Date limite</label>

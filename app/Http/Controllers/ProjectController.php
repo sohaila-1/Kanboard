@@ -81,7 +81,7 @@ public function show(Project $project, Request $request)
 
     $search = $request->input('search');
 
-    $project->load('tasks', 'members', 'creator');
+    $project->load(['tasks.creator', 'members', 'creator']);
 
     $tasks = $project->tasks()
         ->when($search, function ($query, $search) {
@@ -169,22 +169,30 @@ public function kanban(Project $project)
 public function calendar(Project $project)
 {
     if ($project->user_id !== auth()->id()) {
-    abort(403);
-}
+        abort(403);
+    }
 
     $events = [];
 
     foreach ($project->tasks as $task) {
         if ($task->due_date) {
+            $due = Carbon::parse($task->due_date);
+
+            if ($due->hour === 0 && $due->minute === 0) {
+                $due->setTime(12, 0); // défaut à midi si heure absente
+            }
+
             $events[] = [
                 'title' => $task->title,
-                'start' => Carbon::parse($task->due_date)->format('Y-m-d\TH:i:s'),
+                'start' => $due->format('Y-m-d\TH:i:s'),
+                'end' => $due->copy()->addHour()->format('Y-m-d\TH:i:s'), // 👈 durée 1h
                 'color' => match($task->category) {
                     'fait' => '#28a745',
                     'en cours' => '#ffc107',
                     'annulé' => '#dc3545',
                     default => '#007bff',
-                }
+                },
+                'description' => $task->description ?? '',
             ];
         }
     }
@@ -194,9 +202,5 @@ public function calendar(Project $project)
         'events' => $events,
     ]);
 }
-
-
-
-     
 
 }

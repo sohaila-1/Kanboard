@@ -34,12 +34,13 @@ class Project extends Model
     }
 
     public function members()
-{
-    return $this->belongsToMany(User::class, 'project_user');
-}
-public function creator()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
+    {
+        return $this->belongsToMany(User::class, 'project_user', 'project_id', 'user_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
 }

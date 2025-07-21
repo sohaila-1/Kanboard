@@ -1,29 +1,35 @@
 @extends('layouts.app')
 
+@section('title', 'Connexion')
+
 @section('content')
-<div class="container">
-    <h2>Connexion</h2>
+<div class="d-flex justify-content-center align-items-center" style="height: 75vh;">
+    <div class="card shadow p-4" style="min-width: 400px;">
+        <h4 class="text-center mb-4">🔐 Connexion à Kanboard</h4>
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+        @if (session('status'))
+            <div class="alert alert-info">{{ session('status') }}</div>
+        @endif
 
-        <div class="mb-3">
-            <label>Email</label>
-            <input type="email" name="email" class="form-control" required>
-            @error('email') <div class="text-danger">{{ $message }}</div> @enderror
-        </div>
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
 
-        <div class="mb-3">
-            <label>Mot de passe</label>
-            <input type="password" name="password" class="form-control" required>
-            @error('password') <div class="text-danger">{{ $message }}</div> @enderror
-        </div>
-        <div class="mb-3">
-            <a href="{{ route('password.request') }}">Mot de passe oublié ?</a>
-        </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">📧 Email</label>
+                <input type="email" id="email" name="email" class="form-control" required autofocus>
+            </div>
 
+            <div class="mb-3">
+                <label for="password" class="form-label">🔒 Mot de passe</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
 
-        <button type="submit" class="btn btn-primary">Se connecter</button>
-    </form>
+            <div class="mb-3 d-flex justify-content-between">
+                <a href="{{ route('password.request') }}">Mot de passe oublié ?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Se connecter</button>
+        </form>
+    </div>
 </div>
 @endsection

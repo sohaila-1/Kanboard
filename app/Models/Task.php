@@ -15,8 +15,11 @@ protected $fillable = [
     'project_id',
 ];
 
-    public function project()
-    {
-        return $this->belongsTo(Project::class);
-    }
+public function creator()
+{
+    return $this->belongsTo(\App\Models\User::class, 'user_id');
+}
+
+
+
 }

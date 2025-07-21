@@ -114,7 +114,6 @@
 <body>
     <div class="page-wrapper">
         <div class="sidebar">
-
             <!-- Accueil aligné -->
             @if (!request()->is('/'))
                <a href="{{ route('dashboard') }}">Accueil</a>
@@ -142,7 +141,7 @@
             @auth
                 <form action="{{ route('logout') }}" method="POST" class="mt-auto">
                     @csrf
-                    <a href="#">⚙️ Modifier profil</a>
+                    <a href="{{ route('profile.edit') }}">⚙️ Modifier profil</a>
                     <button type="submit" class="btn btn-outline-danger w-100 mt-3">🚪 Se déconnecter</button>
                 </form>
             @endauth

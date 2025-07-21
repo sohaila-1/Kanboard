@@ -8,6 +8,16 @@ use App\Models\Project;
 
 class TaskController extends Controller
 {
+    public function show($projectId, $taskId)
+    {
+        $project = \App\Models\Project::findOrFail($projectId);
+        $task = \App\Models\Task::where('id', $taskId)
+            ->where('project_id', $projectId)
+            ->firstOrFail();
+
+        return view('tasks.show', compact('project', 'task'));
+    }
+
     public function create(Project $project)
     {
         return view('tasks.create', compact('project'));
@@ -19,6 +29,7 @@ class TaskController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'nullable|string',
+            'priority' => 'nullable|string',
             'due_date' => 'nullable|date',
         ]);
 
@@ -31,9 +42,10 @@ class TaskController extends Controller
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'category' => strtolower(trim($validated['category'] ?? 'à faire')),
+            'priority' => $request->priority,
             'due_date' => $datetime,
             'project_id' => $project->id,
-            'user_id' => auth()->id(),
+            'user_id' => auth()->id(), 
         ]);
 
         return redirect()->route('projects.show', $project->id)
@@ -42,15 +54,24 @@ class TaskController extends Controller
 
     public function edit(Project $project, Task $task)
     {
+        if ($task->project_id !== $project->id) {
+            abort(404);
+        }
+
         return view('tasks.edit', compact('project', 'task'));
     }
 
+
     public function update(Request $request, Project $project, Task $task)
     {
+        if ($task->project_id !== $project->id) {
+        abort(404);
+    }
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'category' => 'nullable|string',
+            'priority' => 'nullable|string',
             'due_date' => 'nullable|date',
         ]);
 
@@ -63,6 +84,7 @@ class TaskController extends Controller
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
             'category' => strtolower(trim($validated['category'] ?? 'à faire')),
+            'priority' => $request->priority,
             'due_date' => $datetime,
         ]);
 
@@ -85,4 +107,6 @@ class TaskController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+
 }
