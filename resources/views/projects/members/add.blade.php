@@ -1,21 +1,35 @@
 @extends('layouts.app')
 
-@section('title', 'Ajouter un membre')
+@section('title', 'Inviter un membre')
 
 @section('content')
-    <h2 class="mb-4">Ajouter un membre au projet : <strong>{{ $project->title }}</strong></h2>
+<div class="container mt-5">
+    <h2 class="mb-4">👥 Inviter un membre au projet : {{ $project->title }}</h2>
+
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
     @if(session('error'))
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    <form action="{{ route('projects.members.store', $project) }}" method="POST" class="w-50">
+    <form method="POST" action="{{ route('projects.members.store', $project) }}">
         @csrf
         <div class="mb-3">
-            <label for="email" class="form-label">Adresse email de l'utilisateur</label>
-            <input type="email" name="email" id="email" class="form-control" placeholder="exemple@mail.com" required>
+            <label for="email" class="form-label">📧 Adresse email du membre</label>
+            <input type="email" name="email" id="email"
+                   class="form-control @error('email') is-invalid @enderror"
+                   required value="{{ old('email') }}">
+
+            @error('email')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
-        <button type="submit" class="btn btn-success">➕ Ajouter</button>
-        <a href="{{ route('projects.show', $project) }}" class="btn btn-secondary">Retour</a>
+
+        <button type="submit" class="btn btn-primary">✉️ Envoyer l’invitation</button>
     </form>
+
+    <a href="{{ route('projects.show', $project) }}" class="btn btn-outline-secondary mt-3">⬅️ Retour au projet</a>
+</div>
 @endsection

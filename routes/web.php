@@ -10,6 +10,10 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\LoginController;
+
+
+Route::post('/login', [LoginController::class, 'login']);
 
 // Accueil
 Route::get('/', function () {
@@ -35,19 +39,24 @@ Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEm
 Route::get('/password/reset/{token}/{email}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
 Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('password.update');
 
+
+
 // VÉRIFICATION EMAIL
+// Page qui demande à vérifier l'email
 Route::get('/email/verify', function () {
-    return view('auth.verify-email');
+    return view('auth.verify'); // crée cette vue si nécessaire
 })->middleware('auth')->name('verification.notice');
 
+// Lien de vérification (cliqué dans l'email)
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return redirect('/');
+    $request->fulfill(); // marque comme vérifié
+    return redirect('/'); // ou dashboard
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
+// Relancer l'envoi de l'email
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Un nouveau lien de vérification a été envoyé à votre adresse email.');
+    return back()->with('status', 'Un nouveau lien de vérification a été envoyé.');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // Routes protégées après authentification et vérification d'email
@@ -73,7 +82,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/projects/{project}/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::get('/projects/{project}/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
     
-    
+    Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
     // Dashboard
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     // Profile

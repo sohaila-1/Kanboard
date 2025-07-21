@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   app:
@@ -22,8 +21,8 @@ services:
     environment:
       MYSQL_DATABASE: kanboard
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: kanboard_user
-      MYSQL_PASSWORD: kanboard_password
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
     ports:
       - "3307:3307"
     volumes:
@@ -50,7 +49,6 @@ services:
     container_name: kanboard_nginx
     ports:
       - "8080:80"
-      - "8444:443"
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d
       - /etc/letsencrypt:/etc/letsencrypt:ro

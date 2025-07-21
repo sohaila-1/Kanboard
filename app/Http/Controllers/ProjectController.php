@@ -70,14 +70,16 @@ public function index(Request $request)
      */
 public function show(Project $project, Request $request)
 {
-    $user = auth()->user();
+$user = auth()->user();
 
-    if (
-        $project->user_id !== $user->id &&
-        !$project->members->contains($user->id)
-    ) {
-        abort(403);
-    }
+if (
+    $project->user_id !== $user->id &&
+    !$project->members->contains($user->id)
+) {
+    abort(403);
+}
+
+
 
     $search = $request->input('search');
 
@@ -143,9 +145,15 @@ public function show(Project $project, Request $request)
 
 public function kanban(Project $project)
 {
-    if ($project->user_id !== auth()->id()) {
+    $user = auth()->user();
+
+if (
+    $project->user_id !== $user->id &&
+    !$project->members->contains($user->id)
+) {
     abort(403);
 }
+
 
     $tasks = $project->tasks;
 
@@ -168,9 +176,14 @@ public function kanban(Project $project)
 
 public function calendar(Project $project)
 {
-    if ($project->user_id !== auth()->id()) {
-        abort(403);
-    }
+   $user = auth()->user();
+
+if (
+    $project->user_id !== $user->id &&
+    !$project->members->contains($user->id)
+) {
+    abort(403);
+}
 
     $events = [];
 

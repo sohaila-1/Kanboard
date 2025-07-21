@@ -1,20 +1,20 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="container">
-    <h2>Vérification de l'email</h2>
+@section('title', 'Vérifiez votre email')
 
-    @if (session('message'))
-        <div class="alert alert-success">
-            {{ session('message') }}
-        </div>
+@section('content')
+<div class="container mt-5 text-center">
+    <h2 class="mb-3">📧 Vérifiez votre adresse email</h2>
+    <p>Un lien de vérification a été envoyé à <strong>{{ auth()->user()->email }}</strong>.</p>
+    <p>Veuillez cliquer sur le lien pour accéder à votre espace.</p>
+
+    @if (session('status'))
+        <div class="alert alert-success mt-3">{{ session('status') }}</div>
     @endif
 
-    <p>Avant de continuer, veuillez vérifier votre adresse email en cliquant sur le lien que nous venons de vous envoyer.</p>
-
-    <form method="POST" action="{{ route('verification.send') }}">
+    <form method="POST" action="{{ route('verification.send') }}" class="mt-4">
         @csrf
-        <button type="submit" class="btn btn-primary">Renvoyer le lien de vérification</button>
+        <button type="submit" class="btn btn-outline-primary">🔁 Renvoyer le lien</button>
     </form>
 </div>
 @endsection
