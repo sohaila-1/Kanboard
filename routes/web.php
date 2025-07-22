@@ -58,6 +58,8 @@ Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('status', 'Un nouveau lien de vérification a été envoyé.');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+Route::get('/projects/invite/accept/{token}', [ProjectMemberController::class, 'acceptInvitation'])
+    ->name('projects.invite.accept');
 
 // Routes protégées après authentification et vérification d'email
 Route::middleware(['auth', 'verified'])->group(function () {

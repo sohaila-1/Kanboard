@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Project;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -13,7 +14,7 @@ class ProjectInvitationMail extends Mailable
     public $project;
     public $token;
 
-    public function __construct($project, $token)
+    public function __construct(Project $project, string $token)
     {
         $this->project = $project;
         $this->token = $token;
@@ -21,13 +22,13 @@ class ProjectInvitationMail extends Mailable
 
     public function build()
     {
-        $url = url("/projects/invite/accept/{$this->token}");
+        $url = route('projects.invite.accept', ['token' => $this->token]);
 
-        return $this->subject("Invitation à rejoindre le projet {$this->project->title}")
-                    ->view('emails.project_invitation')
-                    ->with([
-                        'url' => $url,
-                        'project' => $this->project,
-                    ]);
+        return $this->subject('Invitation à rejoindre un projet')
+            ->view('emails.project_invitation')
+            ->with([
+                'project' => $this->project,
+                'url' => $url,
+            ]);
     }
 }
