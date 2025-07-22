@@ -11,7 +11,7 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable;
 
-    
+
     protected $fillable = [
         'name',
         'email',
@@ -42,7 +42,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function sharedProjects()
     {
-    return $this->belongsToMany(Project::class, 'project_user');
+        return $this->belongsToMany(Project::class, 'project_user');
     }
 
+    public function assignedTasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_user');
+    }
 }

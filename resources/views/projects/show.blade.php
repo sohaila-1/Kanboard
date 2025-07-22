@@ -28,7 +28,11 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">🗂️ Tâches du projet</h4>
+        <div>
+        <a href="{{ route('projects.kanban', $project->id) }}" class="btn btn-sm btn-outline-primary">🌈 Vue Kanban</a>
+        <a href="{{ route('projects.calendar', $project->id) }}" class="btn btn-sm btn-outline-primary">📅 Vue Calendrier</a>
         <a href="{{ route('tasks.create', $project->id) }}" class="btn btn-primary">➕ Ajouter une tâche</a>
+        </div>
     </div>
 
     @if ($tasks->isEmpty())
@@ -55,6 +59,14 @@
                             <span class="text-muted">Non définie</span>
                         @endif
                     </p>
+                    <!-- Utilisateurs assignés -->
+                    <p><strong>Assigné à :</strong>
+                        @forelse ($task->assignedUsers as $user)
+                            <span class="badge bg-info text-dark me-1">{{ $user->name }}</span>
+                            @empty
+                            <span class="text-muted">Aucun utilisateur assigné.</span>
+                        @endforelse
+                    </p>
                     <p class="mb-1"><strong>Échéance :</strong>
                         {{ $task->due_date ? \Carbon\Carbon::parse($task->due_date)->format('d/m/Y') : 'Aucune' }}
                     </p>
@@ -69,6 +81,16 @@
                             <button type="submit" class="btn btn-sm btn-outline-danger">🗑️ Supprimer</button>
                         </form>
                     </div>
+                    <form action="{{ route('tasks.assign', [$project->id, $task->id]) }}" method="POST" class="d-flex gap-2 mt-2">
+                        @csrf
+                        <select name="user_id" class="form-select form-select-sm" required>
+                        <option value="" disabled selected>👥 Choisir un utilisateur</option>
+                                @foreach(\App\Models\User::all() as $user)
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">👤➕ Assigner</button>
+                    </form>
                 </div>
             </div>
         @endforeach
