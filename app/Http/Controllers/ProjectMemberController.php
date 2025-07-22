@@ -51,30 +51,31 @@ class ProjectMemberController extends Controller
     }
 
     public function acceptInvitation($token)
-    {
-        $invitation = ProjectInvitation::where('token', $token)->first();
+{
+    $invitation = ProjectInvitation::with('project.members')->where('token', $token)->first();
 
-        if (!$invitation) {
-            abort(404, 'Invitation introuvable ou expirée.');
-        }
-
-        if (!auth()->check()) {
-            session(['invitation_token' => $token]);
-            return redirect()->route('login')->with('info', 'Connectez-vous pour accepter l’invitation.');
-        }
-
-        $user = auth()->user();
-
-        if ($invitation->project->members->contains($user->id)) {
-            $invitation->delete(); // Nettoyage de l’invitation
-            return redirect()->route('projects.show', $invitation->project_id)
-                ->with('info', 'Vous êtes déjà membre de ce projet.');
-        }
-
-        $invitation->project->members()->attach($user->id);
-        $invitation->delete();
-
-        return redirect()->route('projects.show', $invitation->project_id)
-            ->with('success', 'Bienvenue sur le projet "' . $invitation->project->title . '" !');
+    if (!$invitation || !$invitation->project) {
+        abort(404, 'Projet introuvable ou invitation invalide.');
     }
+
+    if (!auth()->check()) {
+        session(['invitation_token' => $token]);
+        return redirect()->route('login')->with('info', 'Connectez-vous pour accepter l’invitation.');
+    }
+
+    $user = auth()->user();
+    $project = $invitation->project;
+
+    if ($project->members->contains($user->id)) {
+        $invitation->delete();
+        return redirect()->route('projects.show', $project->id)
+            ->with('info', 'Vous êtes déjà membre de ce projet.');
+    }
+
+    $project->members()->attach($user->id);
+    $invitation->delete();
+
+    return view('projects.invitation_accepted', ['project' => $project]);
+
+}
 }

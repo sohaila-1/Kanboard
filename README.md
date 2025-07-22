@@ -1,74 +1,57 @@
-# 📌 Kanboard — Gestion de projets en ligne
+# 📌 Kanboard – Application de Gestion de Projets
 
-> Une application web de gestion de projets avec vue Kanban, liste, calendrier et système d'utilisateurs.
+Kanboard est une application Web collaborative inspirée de la méthode Kanban, conçue pour aider les équipes à planifier, suivre et gérer efficacement leurs projets via des tableaux interactifs, des vues personnalisables, et des fonctionnalités avancées.
+
+## 🚀 Fonctionnalités principales
+
+### 🧑‍💼 Authentification & Sécurité
+- Inscription avec email de confirmation (via Resend)
+- Connexion sécurisée avec mot de passe
+- Réinitialisation de mot de passe avec lien temporaire (expiration après 5 minutes)
+
+### 📁 Gestion de Projets
+- Création de projets par les utilisateurs
+- Invitation de membres par email
+- Attribution des rôles (créateur, membres)
+
+### ✅ Gestion des Tâches
+- Création de tâches avec :
+  - Titre (obligatoire)
+  - Description, catégorie, priorité (optionnels)
+  - Dates : création, échéance, complétion
+- Attribution des tâches à un ou plusieurs membres
+
+### 🖼️ Vues dynamiques
+- Vue **Kanban** avec glisser-déposer
+- Vue **Liste** pour recherche/filtrage
+- Vue **Calendrier** avec affichage journalier, 3 jours, semaine, mois
+
+### 🌐 Interface moderne & responsive
+- Adaptée aux mobiles
+- Prise en compte du thème système (clair / sombre)
+
+### 🛠️ Technologies utilisées
+- **Frontend** : HTML, CSS, JavaScript
+- **Backend** : PHP (Laravel)
+- **Base de données** : MySQL
+- **Temps réel** : Laravel Echo + Pusher
+- **Conteneurisation** : Docker & Docker Compose
+
+### 📉 Statistiques (Bonus)
+- Moyenne des tâches par membre
+- Temps moyen de complétion
+- Répartition par catégories
+
+### 🔁 Synchronisation & Offline (Bonus)
+- Fonctionnalité **hors-ligne** : tâches temporaires stockées localement
+- Synchronisation automatique dès reconnection
+- Export des tâches au format **iCal** compatible Google/Microsoft Calendar
 
 ---
 
-## 🧰 Technologies utilisées
+## ⚙️ Installation locale
 
-- PHP 8.2 / Laravel 10+
-- MySQL
-- Bootstrap 5
-- FullCalendar.js
-- Git / GitHub
-
----
-
-## ⚙️ Fonctionnalités principales
-
-- ✅ Authentification (inscription, connexion, déconnexion)
-- ✅ Création, édition et suppression de projets
-- ✅ Vue Kanban dynamique avec glisser-déposer
-- ✅ Vue calendrier (FullCalendar) des tâches à échéance
-- ✅ Gestion des tâches avec titre, description, priorité, date limite, catégorie
-- ✅ Interface responsive et stylisée
-
----
-
-## 🚀 Installation locale du projet
-
-Voici les étapes pour cloner et faire fonctionner le projet Kanboard sur votre machine locale.
-
----
-
-### 1️⃣ Cloner le projet
-
+### 1. Cloner le projet
 ```bash
-git clone https://github.com/votre-utilisateur/kanboard.git
+git clone https://github.com/<votre-utilisateur>/kanboard.git
 cd kanboard
-2️⃣ Installer les dépendances PHP avec Composer
-Assurez-vous d’avoir Composer installé sur votre machine.
-composer install
-3️⃣ Copier le fichier .env et générer la clé Laravel
-bash
-Copy
-Edit
-cp .env.example .env
-php artisan key:generate
-4️⃣ Configurer la base de données
-Dans le fichier .env, modifiez les lignes suivantes selon votre configuration MySQL :
-
-env
-Copy
-Edit
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=kanboard
-DB_USERNAME=root
-DB_PASSWORD=secret
-💡 Pensez à créer manuellement la base kanboard dans votre outil de gestion MySQL.
-
-5️⃣ Lancer les migrations de la base
-bash
-Copy
-Edit
-php artisan migrate
-6️⃣ Démarrer le serveur Laravel
-bash
-Copy
-Edit
-php artisan serve
-Ensuite, ouvrez votre navigateur sur :
-
-http://localhost:8000

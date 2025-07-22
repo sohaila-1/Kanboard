@@ -22,7 +22,8 @@ class ProjectInvitationMail extends Mailable
 
     public function build()
     {
-        $url = route('projects.invite.accept', ['token' => $this->token]);
+        $url = config('app.url') . route('projects.invite.accept', ['token' => $this->token], false);
+
 
         return $this->subject('Invitation à rejoindre un projet')
             ->view('emails.project_invitation')
@@ -31,4 +32,5 @@ class ProjectInvitationMail extends Mailable
                 'url' => $url,
             ]);
     }
+    
 }

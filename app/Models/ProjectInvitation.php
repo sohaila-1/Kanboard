@@ -6,5 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectInvitation extends Model
 {
-    protected $fillable = ['project_id', 'email', 'token']; // ✅ Ajoute les colonnes ici
+    protected $fillable = [
+        'project_id',
+        'email',
+        'token',
+    ];
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
 }

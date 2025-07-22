@@ -196,17 +196,23 @@ if (
             }
 
             $events[] = [
-                'title' => $task->title,
-                'start' => $due->format('Y-m-d\TH:i:s'),
-                'end' => $due->copy()->addHour()->format('Y-m-d\TH:i:s'), // 👈 durée 1h
-                'color' => match($task->category) {
-                    'fait' => '#28a745',
-                    'en cours' => '#ffc107',
-                    'annulé' => '#dc3545',
-                    default => '#007bff',
-                },
-                'description' => $task->description ?? '',
-            ];
+            'title' => $task->title,
+            'start' => Carbon::parse($task->due_date)->format('Y-m-d\TH:i:s'),
+            'end' => Carbon::parse($task->due_date)->addHour()->format('Y-m-d\TH:i:s'),
+            'color' => match($task->category) {
+                'fait' => '#28a745',
+                'en cours' => '#ffc107',
+                'annulé' => '#dc3545',
+                default => '#007bff',
+            },
+            'extendedProps' => [
+                'description' => $task->description ?? 'Pas de description',
+                'responsable' => $task->user->name ?? 'Non assigné',
+                'categorie' => $task->category ?? 'Non catégorisée',
+                'priorite' => $task->priority ?? 'Non définie'
+            ]
+        ];
+
         }
     }
 
