@@ -23,7 +23,7 @@ Route::get('/', function () {
 });
 
 
-// AUTHENTIFICATION 
+// AUTHENTIFICATION
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -33,7 +33,7 @@ Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')
 Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
 
-// RESET PASSWORD 
+// RESET PASSWORD
 Route::get('/password/forgot', [PasswordResetController::class, 'showForgotForm'])->name('password.request');
 Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/password/reset/{token}/{email}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
@@ -70,7 +70,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/projects/{project}/kanban', [ProjectController::class, 'kanban'])->name('projects.kanban');
     Route::get('/projects/{project}/calendar', [ProjectController::class, 'calendar'])->name('projects.calendar');
     Route::get('/projects/{project}/tasks/list', [TaskController::class, 'list'])->name('projects.tasks.list');
-
+    Route::post('/projects/{project}/tasks/{task}/assign', [TaskController::class, 'assign'])->name('tasks.assign');
       // Gestion des tâches
     Route::post('/tasks/{task}/move', [TaskController::class, 'move'])->name('tasks.move');
     Route::get('/projects/{project}/tasks/create', [TaskController::class, 'create'])->name('tasks.create');

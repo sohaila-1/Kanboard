@@ -19,7 +19,7 @@
                 <div class="kanban-cards"
                      ondrop="drop(event, '{{ $status }}')"
                      ondragover="allowDrop(event)">
-                    
+
                     @foreach ($tasks as $task)
                         <div class="kanban-card" draggable="true" ondragstart="drag(event)" id="task-{{ $task->id }}">
                             <div class="d-flex justify-content-between align-items-start">
@@ -118,6 +118,7 @@
     border-radius: 12px;
     padding: 1rem;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #96d6f5;
 }
 
 .kanban-header {

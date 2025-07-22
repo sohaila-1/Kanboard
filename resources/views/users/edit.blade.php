@@ -3,6 +3,15 @@
 @section('title', 'Modifier mon profil')
 
 @section('content')
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul>
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 <div class="container mt-4" style="max-width: 600px;">
     <h2 class="mb-4">⚙️ Modifier mon profil</h2>
 
