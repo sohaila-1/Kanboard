@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
     app:
@@ -30,6 +29,21 @@ services:
             - db_data:/var/lib/mysql
         networks:
             - kanboard
+  db:
+    image: mysql:8.0
+    container_name: kanboard_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: kanboard
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3307:3307"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - kanboard
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
@@ -59,9 +73,20 @@ services:
             - app
         networks:
             - kanboard
+  nginx:
+    image: nginx:alpine
+    container_name: kanboard_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./:/var/www
 
 networks:
     kanboard:
 
 volumes:
     db_data:
+
+  db_data:

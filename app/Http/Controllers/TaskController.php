@@ -45,11 +45,10 @@ class TaskController extends Controller
             'priority' => $request->priority,
             'due_date' => $datetime,
             'project_id' => $project->id,
-            'user_id' => auth()->id(), 
+            'user_id' => auth()->id(),
         ]);
 
-        return redirect()->route('projects.show', $project->id)
-            ->with('success', 'Tâche ajoutée avec succès.');
+        return redirect()->route('projects.show', $project->id)->with('success', 'Tâche ajoutée avec succès.');
     }
 
     public function edit(Project $project, Task $task)
@@ -65,8 +64,9 @@ class TaskController extends Controller
     public function update(Request $request, Project $project, Task $task)
     {
         if ($task->project_id !== $project->id) {
-        abort(404);
-    }
+            abort(404);
+        }
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -96,8 +96,7 @@ class TaskController extends Controller
     {
         $task->delete();
 
-        return redirect()->route('projects.show', $project->id)
-            ->with('success', 'Tâche supprimée avec succès.');
+        return redirect()->route('projects.show', $project->id)->with('success', 'Tâche supprimée avec succès.');
     }
 
     public function move(Request $request, Task $task)
@@ -109,4 +108,15 @@ class TaskController extends Controller
     }
 
 
+    public function assign(Request $request, Project $project, Task $task)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        // Ajout sans doublon
+        $task->assignedUsers()->syncWithoutDetaching([$request->user_id]);
+
+        return back()->with('success', 'Utilisateur assigné avec succès à cette tâche.');
+    }
 }

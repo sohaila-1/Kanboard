@@ -10,14 +10,22 @@
         <p><strong>Description :</strong><br>{{ $task->description ?? '—' }}</p>
 
 
-            @php
-        $badgeClass = match($task->priority) {
-            'Élevée' => 'danger',
-            'Moyenne' => 'warning',
-            'Basse' => 'success',
-            default => 'secondary',
-        };
-    @endphp
+        @php
+            $badgeClass = match($task->priority) {
+                'Élevée' => 'danger',
+                'Moyenne' => 'warning',
+                'Basse' => 'success',
+                default => 'secondary',
+            };
+        @endphp
+
+    <p><strong>Assigné à :</strong>
+        @forelse ($task->assignedUsers as $user)
+            <span class="badge bg-info text-dark me-1">{{ $user->name }}</span>
+            @empty
+            <span class="text-muted">Aucun utilisateur assigné.</span>
+        @endforelse
+    </p>
 
     <p>
         <strong>Priorité :</strong>

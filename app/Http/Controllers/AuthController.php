@@ -28,12 +28,13 @@ class AuthController extends Controller
         'password' => Hash::make($request->password),
     ]);
 
-    // 👉 Envoi de l'email de vérification
+    // Envoi de l'email de vérification
     $user->sendEmailVerificationNotification();
 
-    return redirect()->route('verification.notice')
-        ->with('status', 'Vérifiez votre email avant de vous connecter.');
+    // ✅ Redirige vers /login avec message flash
+    return redirect()->route('login')->with('success', 'Inscription réussie ✅. Veuillez vérifier votre email avant de vous connecter.');
 }
+
 
 
     public function showLoginForm()

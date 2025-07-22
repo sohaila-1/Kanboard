@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>@yield('title', 'Kanboard')</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+<meta charset="UTF-8">
+<title>@yield('title', 'Kanboard')</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <style>
         html, body {
@@ -108,76 +108,102 @@
             color: white;
             border-color: #800020;
         }
-    </style>
+
+        /* 🎯 Sidebar mobile visible */
+        #sidebar.mobile-visible {
+            display: block !important;
+            position: absolute;
+            top: 56px;
+            left: 0;
+            width: 75%;
+            background-color: white;
+            z-index: 1050;
+            height: calc(100% - 56px);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+        }
+</style>
 </head>
 
 <body>
+<!-- 🔘 Bouton burger visible uniquement sur mobile -->
+<button id="burger-toggle" class="btn btn-outline-secondary d-md-none m-2">
+        ☰ Menu
+</button>
+
     <div class="page-wrapper">
-        <div class="sidebar">
-            <!-- Accueil aligné -->
+<!-- 📚 Sidebar -->
+<div id="sidebar" class="sidebar d-none d-md-flex flex-column">
             @if (!request()->is('/'))
-               <a href="{{ route('dashboard') }}">Accueil</a>
-
-            @endif
-
-            <a href="{{ route('projects.create') }}">➕ Nouveau projet</a>
-            <a href="{{ route('projects.index') }}">📁 Mes projets</a>
-
-            {{-- Retour contextuel --}}
-            @if (Str::contains(Request::url(), ['kanban', 'calendar']))
-                <a href="{{ route('projects.show', $project ?? request()->route('project')) }}">
-                    ⬅️ Retour au {{ $project->title ?? 'projet' }}
-                </a>
+                <a href="{{ url('/') }}">🏠 Accueil</a>
             @endif
 
             @auth
-            @if (isset($project))
-        <a href="{{ route('projects.kanban', $project->id) }}">🌈 Vue Kanban</a>
-        <a href="{{ route('projects.calendar', $project->id) }}">📅 Vue Calendrier</a>
-            @endif
-            @endauth
+                <a href="{{ route('projects.create') }}">➕ Nouveau projet</a>
+                <a href="{{ route('projects.index') }}">📁 Mes projets</a>
 
+                @if (Str::contains(Request::url(), ['kanban', 'calendar']))
+                    <a href="{{ route('projects.show', $project ?? request()->route('project')) }}">
+                        ⬅️ Retour au {{ $project->title ?? 'projet' }}
+                    </a>
+                @endif
 
-            @auth
+                <a href="{{ route('profile.edit') }}">⚙️ Modifier profil</a>
                 <form action="{{ route('logout') }}" method="POST" class="mt-auto">
-                    @csrf
-                    <a href="{{ route('profile.edit') }}">⚙️ Modifier profil</a>
-                    <button type="submit" class="btn btn-outline-danger w-100 mt-3">🚪 Se déconnecter</button>
+                                    @csrf
+                <button type="submit" class="btn btn-outline-danger w-100 mt-3">🚪 Se déconnecter</button>
                 </form>
             @endauth
-                        <div class="mt-4">
-                <button id="toggle-dark" class="btn btn-sm btn-outline-dark w-100">
+
+            <div class="mt-4">
+                    <button id="toggle-dark" class="btn btn-sm btn-outline-dark w-100">
                     🌙 Mode sombre
-                </button>
-            </div>
+            </button>
+</div>
+</div>
 
-        </div>
-
-        <div class="main-content">
+        <!-- Contenu principal -->
+<div class="main-content">
             @yield('content')
-        </div>
-    </div>
+</div>
+</div>
 
     <footer>
         © {{ date('Y') }} Kanboard — Tous droits réservés.
-    </footer>
+</footer>
+
+    <!-- 📱 Script burger menu -->
+<script>
+        const burgerBtn = document.getElementById('burger-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        burgerBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-visible');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !burgerBtn.contains(e.target)) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+</script>
 
     <!-- 🌙 Dark Mode Script -->
-    <script>
-        const toggleBtn = document.getElementById('toggle-dark');
+<script>
+        const toggleDark = document.getElementById('toggle-dark');
         const html = document.documentElement;
 
         if (localStorage.getItem('theme') === 'dark') {
             html.classList.add('dark-mode');
         }
 
-        toggleBtn?.addEventListener('click', () => {
+        toggleDark?.addEventListener('click', () => {
             html.classList.toggle('dark-mode');
             localStorage.setItem('theme', html.classList.contains('dark-mode') ? 'dark' : 'light');
         });
-    </script>
+</script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     @yield('scripts')
 </body>
 </html>
+
