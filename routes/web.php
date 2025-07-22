@@ -44,7 +44,7 @@ Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name(
 // VÉRIFICATION EMAIL
 // Page qui demande à vérifier l'email
 Route::get('/email/verify', function () {
-    return view('auth.verify'); // crée cette vue si nécessaire
+    return view('auth.verify-email'); // crée cette vue si nécessaire
 })->middleware('auth')->name('verification.notice');
 
 // Lien de vérification (cliqué dans l'email)
@@ -81,7 +81,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Suppression d'une tâche
     Route::delete('/projects/{project}/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::get('/projects/{project}/tasks/{task}', [TaskController::class, 'show'])->name('tasks.show');
-    
+
     Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
