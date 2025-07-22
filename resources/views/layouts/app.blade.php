@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>@yield('title', 'Kanboard')</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>@yield('title', 'Kanboard')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- PWA Meta -->
+    <meta name="theme-color" content="#1f2937">
+    <link rel="manifest" href="{{ asset('build/manifest.webmanifest') }}">
+    <script src="{{ asset('build/registerSW.js') }}"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <style>
         html, body {
@@ -109,7 +115,6 @@
             border-color: #800020;
         }
 
-        /* 🎯 Sidebar mobile visible */
         #sidebar.mobile-visible {
             display: block !important;
             position: absolute;
@@ -121,89 +126,85 @@
             height: calc(100% - 56px);
             box-shadow: 2px 0 10px rgba(0,0,0,0.2);
         }
-</style>
+    </style>
 </head>
 
 <body>
-<!-- 🔘 Bouton burger visible uniquement sur mobile -->
 <button id="burger-toggle" class="btn btn-outline-secondary d-md-none m-2">
-        ☰ Menu
+    ☰ Menu
 </button>
 
-    <div class="page-wrapper">
-<!-- 📚 Sidebar -->
-<div id="sidebar" class="sidebar d-none d-md-flex flex-column">
-            @if (!request()->is('/'))
-                <a href="{{ url('/') }}">🏠 Accueil</a>
+<div class="page-wrapper">
+    <div id="sidebar" class="sidebar d-none d-md-flex flex-column">
+        @if (!request()->is('/'))
+            <a href="{{ url('/') }}">🏠 Accueil</a>
+        @endif
+
+        @auth
+            <a href="{{ route('projects.create') }}">➕ Nouveau projet</a>
+            <a href="{{ route('projects.index') }}">📁 Mes projets</a>
+
+            @if (Str::contains(Request::url(), ['kanban', 'calendar']))
+                <a href="{{ route('projects.show', $project ?? request()->route('project')) }}">
+                    ⬅️ Retour au {{ $project->title ?? 'projet' }}
+                </a>
             @endif
 
-            @auth
-                <a href="{{ route('projects.create') }}">➕ Nouveau projet</a>
-                <a href="{{ route('projects.index') }}">📁 Mes projets</a>
-
-                @if (Str::contains(Request::url(), ['kanban', 'calendar']))
-                    <a href="{{ route('projects.show', $project ?? request()->route('project')) }}">
-                        ⬅️ Retour au {{ $project->title ?? 'projet' }}
-                    </a>
-                @endif
-
-                <a href="{{ route('profile.edit') }}">⚙️ Modifier profil</a>
-                <form action="{{ route('logout') }}" method="POST" class="mt-auto">
-                                    @csrf
+            <a href="{{ route('profile.edit') }}">⚙️ Modifier profil</a>
+            <form action="{{ route('logout') }}" method="POST" class="mt-auto">
+                @csrf
                 <button type="submit" class="btn btn-outline-danger w-100 mt-3">🚪 Se déconnecter</button>
-                </form>
-            @endauth
+            </form>
+        @endauth
 
-            <div class="mt-4">
-                    <button id="toggle-dark" class="btn btn-sm btn-outline-dark w-100">
-                    🌙 Mode sombre
+        <div class="mt-4">
+            <button id="toggle-dark" class="btn btn-sm btn-outline-dark w-100">
+                🌙 Mode sombre
             </button>
-</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        @yield('content')
+    </div>
 </div>
 
-        <!-- Contenu principal -->
-<div class="main-content">
-            @yield('content')
-</div>
-</div>
-
-    <footer>
-        © {{ date('Y') }} Kanboard — Tous droits réservés.
+<footer>
+    © {{ date('Y') }} Kanboard — Tous droits réservés.
 </footer>
 
-    <!-- 📱 Script burger menu -->
+<!-- 📱 Script burger menu -->
 <script>
-        const burgerBtn = document.getElementById('burger-toggle');
-        const sidebar = document.getElementById('sidebar');
+    const burgerBtn = document.getElementById('burger-toggle');
+    const sidebar = document.getElementById('sidebar');
 
-        burgerBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('mobile-visible');
-        });
+    burgerBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('mobile-visible');
+    });
 
-        document.addEventListener('click', (e) => {
-            if (!sidebar.contains(e.target) && !burgerBtn.contains(e.target)) {
-                sidebar.classList.remove('mobile-visible');
-            }
-        });
-</script>
-
-    <!-- 🌙 Dark Mode Script -->
-<script>
-        const toggleDark = document.getElementById('toggle-dark');
-        const html = document.documentElement;
-
-        if (localStorage.getItem('theme') === 'dark') {
-            html.classList.add('dark-mode');
+    document.addEventListener('click', (e) => {
+        if (!sidebar.contains(e.target) && !burgerBtn.contains(e.target)) {
+            sidebar.classList.remove('mobile-visible');
         }
-
-        toggleDark?.addEventListener('click', () => {
-            html.classList.toggle('dark-mode');
-            localStorage.setItem('theme', html.classList.contains('dark-mode') ? 'dark' : 'light');
-        });
+    });
 </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    @yield('scripts')
+<!-- 🌙 Dark Mode Script -->
+<script>
+    const toggleDark = document.getElementById('toggle-dark');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'dark') {
+        html.classList.add('dark-mode');
+    }
+
+    toggleDark?.addEventListener('click', () => {
+        html.classList.toggle('dark-mode');
+        localStorage.setItem('theme', html.classList.contains('dark-mode') ? 'dark' : 'light');
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@yield('scripts')
 </body>
 </html>
-

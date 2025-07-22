@@ -44,4 +44,16 @@
         </div>
     </div>
 </div>
+<div class="container my-4">
+    <div class="card shadow-sm p-3 rounded-4">
+        <h4 class="mb-3">📦 Tâches en attente de synchronisation</h4>
+        <ul id="offline-task-list" class="list-group mb-3"></ul>
+
+        <button class="btn btn-primary" id="sync-now-btn">
+            🔄 Forcer la synchronisation maintenant
+        </button>
+
+        <div id="sync-feedback" class="mt-3 text-muted" style="font-size: 0.9rem;"></div>
+    </div>
+</div>
 @endsection
