@@ -16,7 +16,8 @@
         </a>
     </div>
     <div class="my-4">
-        <img src="{{ asset('images/kanban.png') }}" alt="Illustration Kanban" class="img-fluid" style="max-height: 300px;">
+        <img src="{{ asset('images/kanban.png') }}" alt="Illustration Kanban"
+        class="img-fluid" style="max-height: 300px;">
     </div>
 
     <div class="card shadow-sm mt-5 mx-auto" style="max-width: 600px;">
